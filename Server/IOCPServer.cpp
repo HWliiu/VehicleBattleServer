@@ -151,6 +151,8 @@ namespace GameServer
 		PerIoData* lpPerIoData = _freeIoDataPool.Pop();
 		lpPerIoData->operatorType = OperatorType::SEND;         //将状态设置成发送
 		int msgLen = msg.length();
+		///////////////////////////////
+		std::cout << "send:" << Util::U2G(msg.c_str()) << std::endl;
 		memcpy_s(lpPerIoData->wsabuf.buf, _TRUNCATE, (byte*)& msgLen, 4);	//封装包头
 		strncpy_s(lpPerIoData->wsabuf.buf + 4, _TRUNCATE, msg.c_str(), msgLen);	//封装数据
 		lpPerIoData->wsabuf.len = msgLen + 4;
@@ -232,7 +234,8 @@ namespace GameServer
 			}
 			else
 			{
-				std::cout << Util::U2G(message) << std::endl;
+				///////////////////////////////////////////////////////
+				std::cout << "recv:" << Util::U2G(message) << std::endl;
 				//lpPerHandleData->sendMessage(message);
 				_commandDispatcher.DispatchCommand(message, lpPerHandleData->sendMessage);
 			}
@@ -269,6 +272,8 @@ namespace GameServer
 			if (dwBytesTransferred == 0 && (lpPerIoData->operatorType == OperatorType::RECV || lpPerIoData->operatorType == OperatorType::SEND))
 			{
 				std::cout << inet_ntoa(lpPerHandleData->clientAddr.sin_addr) << ":" << ntohs(lpPerHandleData->clientAddr.sin_port) << Util::U2G(" 断开连接!") << std::endl;
+				// TODO: 发送断开命令给业务逻辑进行处理
+
 				closesocket(lpPerHandleData->socket);
 				delete lpPerHandleData;
 				lpPerHandleData = nullptr;

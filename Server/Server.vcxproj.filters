@@ -24,13 +24,16 @@
     <ClInclude Include="DbUtil.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="CommandDispatch.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Command.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="HandleManger.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="LoginHandle.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandDispatcher.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -47,13 +50,16 @@
     <ClCompile Include="DbUtil.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="CommandDispatch.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Command.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="HandleManger.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="LoginHandle.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandDispatcher.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

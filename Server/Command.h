@@ -1,6 +1,9 @@
 #pragma once
 #include <functional> 
 #include "include/rapidjson/document.h"
+#include "include/rapidjson/pointer.h"
+#include "include/rapidjson/stringbuffer.h"
+#include "include/rapidjson/writer.h"
 
 using namespace rapidjson;
 
@@ -11,7 +14,7 @@ namespace GameServer
 		class ICommand
 		{
 		public:
-			virtual void Execute(Document document, std::function<void(std::string)> sendMessage) = 0;	//Document实现了移动语义
+			virtual void Execute(Document document, std::function<void(std::string)> sendMessage) = 0;
 		};
 
 		class LoginCommand :public ICommand

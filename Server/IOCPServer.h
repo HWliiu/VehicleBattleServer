@@ -10,7 +10,7 @@
 #include <mutex>
 #include <stack>
 #include <atomic>
-#include "CommandDispatch.h"
+#include "CommandDispatcher.h"
 
 #pragma comment(lib,"ws2_32.lib")
 
