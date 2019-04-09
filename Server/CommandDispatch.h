@@ -1,11 +1,21 @@
 #pragma once
+#include <unordered_map>
+#include "Command.h"
+
 namespace GameServer
 {
-	class CommandDispatch
+	using namespace Command;
+
+	class CommandDispatcher
 	{
 	public:
-		CommandDispatch();
-		~CommandDispatch();
+		CommandDispatcher();
+		~CommandDispatcher();
+
+		void DispatchCommand(char* jsonData, std::function<void(std::string)> sendMessage);
+	private:
+		std::unordered_map<std::string, ICommand> _commandMap;
+		void RegisterCommand();
 	};
 }
 

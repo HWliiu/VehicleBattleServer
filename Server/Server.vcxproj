@@ -151,14 +151,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Command.h" />
     <ClInclude Include="CommandDispatch.h" />
     <ClInclude Include="DbUtil.h" />
+    <ClInclude Include="HandleManger.h" />
     <ClInclude Include="IOCPServer.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Command.cpp" />
     <ClCompile Include="CommandDispatch.cpp" />
     <ClCompile Include="DbUtil.cpp" />
+    <ClCompile Include="HandleManger.cpp" />
     <ClCompile Include="IOCPServer.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

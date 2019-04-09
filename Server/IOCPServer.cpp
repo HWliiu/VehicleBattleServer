@@ -222,7 +222,7 @@ namespace GameServer
 	{
 		//std::cout << Util::U2G("接收了") << dwBytesTransferred << Util::U2G("字节") << std::endl;
 		lpPerHandleData->recvMsgQueue.Enqueue(lpPerIoData->buffer, dwBytesTransferred);
-		//ps:可以异步处理消息,这样就不会阻塞消息的接收,在其他类中调用lpPerHandleData->recvMsgQueue.Dequeue()即可获得完整的消息
+		// TODO: 暂时放这里处理,这里是多线程处理
 		while (true)
 		{
 			char* message = lpPerHandleData->recvMsgQueue.Dequeue();
@@ -233,7 +233,8 @@ namespace GameServer
 			else
 			{
 				std::cout << Util::U2G(message) << std::endl;
-				lpPerHandleData->sendMessage(message);
+				//lpPerHandleData->sendMessage(message);
+				_commandDispatcher.DispatchCommand(message, lpPerHandleData->sendMessage);
 			}
 		}
 

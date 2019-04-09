@@ -8,8 +8,10 @@
 #include <functional> 
 #include <string>
 #include <mutex>
-#include<stack>
+#include <stack>
 #include <atomic>
+#include "CommandDispatch.h"
+
 #pragma comment(lib,"ws2_32.lib")
 
 #if _MSC_VER >= 1600  /* 1600 is Microsoft Visual Studio 2010 */
@@ -89,6 +91,7 @@ namespace GameServer
 		FreeIoDataPool _freeIoDataPool;
 		HANDLE _postAcceptEvent;
 		LPFN_ACCEPTEX _lpfnAcceptEx;
+		CommandDispatcher _commandDispatcher;
 
 		bool PostAccept();
 		bool PostRecv(SOCKET socket);
