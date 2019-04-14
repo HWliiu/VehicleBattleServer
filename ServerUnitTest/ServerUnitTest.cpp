@@ -13,7 +13,7 @@ namespace ServerUnitTest
 		
 		TEST_METHOD(GetSeessionTestMethod)
 		{
-			auto session = Util::DbUtil::GetInstance()->GetSession();
+			auto session = Util::DBUtil::GetInstance()->GetSession();
 			auto name = session.getDefaultSchema().getName();
 			Assert::AreEqual(name.c_str(), L"vehicleBattle");
 		}

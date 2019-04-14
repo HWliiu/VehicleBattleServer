@@ -5,28 +5,28 @@ namespace GameServer
 {
 	namespace Util
 	{
-		DbUtil* DbUtil::_dbUtil = nullptr;
-		std::mutex DbUtil::_mtx;
+		DBUtil* DBUtil::_instance = nullptr;
+		std::mutex DBUtil::_mtx;
 
-		DbUtil* DbUtil::GetInstance()
+		DBUtil* DBUtil::GetInstance()
 		{
-			if (_dbUtil == nullptr)
+			if (_instance == nullptr)
 			{
 				std::lock_guard<std::mutex> lck(_mtx);
-				if (_dbUtil == nullptr)
+				if (_instance == nullptr)
 				{
-					_dbUtil = new DbUtil();
+					_instance = new DBUtil();
 				}
 			}
-			return _dbUtil;
+			return _instance;
 		}
 
-		Session DbUtil::GetSession()
+		Session DBUtil::GetSession()
 		{
-			return _client->getSession();
+			return _client->getSession();	//Session有移动构造函数
 		}
 
-		DbUtil::DbUtil()
+		DBUtil::DBUtil()
 		{
 			_host = "localhost";	// TODO:从配置文件获取
 			_port = 33060;
@@ -49,7 +49,7 @@ namespace GameServer
 		}
 
 
-		DbUtil::~DbUtil()
+		DBUtil::~DBUtil()
 		{
 			_client->close();
 			delete _client;

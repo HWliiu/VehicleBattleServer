@@ -10,5 +10,8 @@
 #define PCH_H
 
 // TODO: 添加要在此处预编译的标头
+#if _MSC_VER >= 1600  /* 1600 is Microsoft Visual Studio 2010 */
+#pragma execution_character_set("utf-8")	//指示char的执行字符集是UTF-8编码
+#endif	//ps:统一使用utf-8编码
 
 #endif //PCH_H

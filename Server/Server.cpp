@@ -6,7 +6,7 @@
 #include <thread>
 #include "IOCPServer.h"
 
-using namespace GameServer;
+using namespace GameServer::Service;
 
 int main()
 {

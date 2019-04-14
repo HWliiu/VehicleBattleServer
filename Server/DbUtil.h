@@ -8,15 +8,15 @@ namespace GameServer
 {
 	namespace Util
 	{
-		class DbUtil
+		class DBUtil
 		{
 		public:
-			static DbUtil* GetInstance();
+			static DBUtil* GetInstance();
 			Session GetSession();
 		private:
-			static DbUtil* _dbUtil;
+			static DBUtil* _instance;
 			static std::mutex _mtx;
-			Client *_client;	//Client为xdevapi提供的Session池类
+			Client* _client;	//Client为xdevapi提供的Session池类
 
 			std::string _host;
 			unsigned int _port;
@@ -25,8 +25,8 @@ namespace GameServer
 			std::string _defaultDb;
 			int _poolSize;
 
-			DbUtil();
-			~DbUtil();
+			DBUtil();
+			~DBUtil();
 		};
 	}
 }

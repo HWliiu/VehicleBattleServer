@@ -3,19 +3,24 @@
 
 namespace GameServer
 {
+	using namespace Handle;
 	namespace Command
 	{
 		void LoginCommand::Execute(Document document, std::function<void(std::string)> sendMessage)
 		{
-			StringBuffer buffer;
-			Writer<StringBuffer> writer(buffer);
-			document.Accept(writer);
-			const char* output = buffer.GetString();
-			printf("%s\n", output);
-			sendMessage(output);
+			rapidjson::Value* username = Pointer("/Paras/Username").Get(document);
+			rapidjson::Value* password = Pointer("/Paras/Password").Get(document);
+
+			auto pLoginHandle = HandleFactory::GetInstance()->GetLoginHandle();
+			pLoginHandle->Login(username->GetString(), password->GetString(), sendMessage);
 		}
 		void RegisterCommand::Execute(Document document, std::function<void(std::string)> sendMessage)
 		{
+			rapidjson::Value* username = Pointer("/Paras/Username").Get(document);
+			rapidjson::Value* password = Pointer("/Paras/Password").Get(document);
+
+			auto pLoginHandle = HandleFactory::GetInstance()->GetLoginHandle();
+			pLoginHandle->Register(username->GetString(), password->GetString(), sendMessage);
 		}
 	}
 }

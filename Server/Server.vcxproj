@@ -153,17 +153,18 @@
   <ItemGroup>
     <ClInclude Include="Command.h" />
     <ClInclude Include="CommandDispatcher.h" />
-    <ClInclude Include="DbUtil.h" />
-    <ClInclude Include="HandleManger.h" />
+    <ClInclude Include="DBUtil.h" />
+    <ClInclude Include="HandleFactory.h" />
     <ClInclude Include="IOCPServer.h" />
     <ClInclude Include="LoginHandle.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="PlayerData.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Command.cpp" />
     <ClCompile Include="CommandDispatcher.cpp" />
-    <ClCompile Include="DbUtil.cpp" />
-    <ClCompile Include="HandleManger.cpp" />
+    <ClCompile Include="DBUtil.cpp" />
+    <ClCompile Include="HandleFactory.cpp" />
     <ClCompile Include="IOCPServer.cpp" />
     <ClCompile Include="LoginHandle.cpp" />
     <ClCompile Include="pch.cpp">
@@ -172,6 +173,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="PlayerData.cpp" />
     <ClCompile Include="Server.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

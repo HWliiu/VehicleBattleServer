@@ -21,19 +21,22 @@
     <ClInclude Include="IOCPServer.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DbUtil.h">
+    <ClInclude Include="DBUtil.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Command.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="HandleManger.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="LoginHandle.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="CommandDispatcher.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="HandleFactory.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerData.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -47,19 +50,22 @@
     <ClCompile Include="IOCPServer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DbUtil.cpp">
+    <ClCompile Include="DBUtil.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Command.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="HandleManger.cpp">
+    <ClCompile Include="CommandDispatcher.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="LoginHandle.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="CommandDispatcher.cpp">
+    <ClCompile Include="HandleFactory.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerData.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
