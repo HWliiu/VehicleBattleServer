@@ -13,7 +13,7 @@ namespace GameServer
 			CommandDispatcher();
 			~CommandDispatcher();
 
-			void DispatchCommand(char* jsonData, std::function<void(std::string)> sendMessage);
+			void DispatchCommand(std::string jsonData, std::function<void(std::string)> sendMessage);
 		private:
 			std::unordered_map<std::string, ICommand*> _commandMap;
 			void InitCommandMap();

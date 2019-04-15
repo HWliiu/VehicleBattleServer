@@ -227,18 +227,18 @@ namespace GameServer
 		{
 			//std::cout << Util::U2G("接收了") << dwBytesTransferred << Util::U2G("字节") << std::endl;
 			lpPerHandleData->recvMsgQueue.Enqueue(lpPerIoData->buffer, dwBytesTransferred);
-			// TODO: 暂时放这里处理,这里是多线程处理
+			// TODO: 用线程池来分发消息
 			while (true)
 			{
-				char* message = lpPerHandleData->recvMsgQueue.Dequeue();
-				if (message == nullptr)
+				std::string message = lpPerHandleData->recvMsgQueue.Dequeue();
+				if (message.empty())
 				{
 					break;
 				}
 				else
 				{
 					///////////////////////////////////////////////////////
-					std::cout << "recv:" << Util::U2G(message) << std::endl;
+					std::cout << "recv:" << Util::U2G(message.c_str()) << std::endl;
 					//lpPerHandleData->sendMessage(message);
 					_commandDispatcher.DispatchCommand(message, lpPerHandleData->sendMessage);
 				}
@@ -266,9 +266,22 @@ namespace GameServer
 			PerIoData* lpPerIoData;
 			while (true)
 			{
-				if (GetQueuedCompletionStatus(pThis->_completionPort, &dwBytesTransferred, (PULONG_PTR)& lpPerHandleData, (LPOVERLAPPED*)& lpPerIoData, INFINITE) == NULL)	//ps:未处理客户端意外断线的情况,socket资源未清理,会返回64错误
+				lpPerHandleData = nullptr;
+				lpPerIoData = nullptr;
+				if (GetQueuedCompletionStatus(pThis->_completionPort, &dwBytesTransferred, (PULONG_PTR)& lpPerHandleData, (LPOVERLAPPED*)& lpPerIoData, INFINITE) == NULL)
 				{
 					std::cout << Util::U2G("GetQueuedCompletionStatus失败！错误代码：") << GetLastError() << std::endl;
+					if (lpPerHandleData != nullptr)
+					{
+						closesocket(lpPerHandleData->socket);
+						delete lpPerHandleData;
+						lpPerHandleData = nullptr;
+					}
+					if (lpPerIoData != nullptr)
+					{
+						pThis->_freeIoDataPool.Push(lpPerIoData);
+					}
+					//socket要与完成端口解除绑定吗?网络异常这一块还不了解
 					return -1;
 				}
 				//主动判断连接是否断开
@@ -345,6 +358,18 @@ namespace GameServer
 			}
 		}
 
+		void FreeIoDataPool::ReducePool(int count)
+		{
+			if (count > GetCount())
+			{
+				count = GetCount();
+			}
+			for (size_t i = 0; i < count; i++)
+			{
+				delete Pop();
+			}
+		}
+
 		void RecvBufQueue::Enqueue(char* buffer, int size)
 		{
 			if (_rear + size > _size)
@@ -357,7 +382,7 @@ namespace GameServer
 			_rear += size;
 		}
 
-		char* RecvBufQueue::Dequeue()
+		std::string RecvBufQueue::Dequeue()
 		{
 			if (_rear > 4)
 			{
@@ -367,20 +392,21 @@ namespace GameServer
 				int packLen = *(int*)packHead;	//将char数组转换为int
 				if (_rear < packLen + 4)	//残包,不需要出列，等待下次接收
 				{
-					return nullptr;
+					return "";
 				}
 				else	//处理粘包
 				{
+					char DetachedMsg[DATA_BUFSIZE];
 					strncpy_s(DetachedMsg, sizeof(DetachedMsg), _data + 4, packLen);	//取出单条消息
 					DetachedMsg[packLen] = 0;	//添加结尾符
 					memmove_s(_data, sizeof(_data), _data + 4 + packLen, _rear - (4 + packLen));	//移动数据,使队首始终在0下标处
 					_rear -= (4 + packLen);	//修改_rear
-					return DetachedMsg;
+					return std::move(DetachedMsg);	//用移动语义,不然会被析构掉
 				}
 			}
 			else if (_rear >= 0)	//数据在包头处断开或正好处理完,不需要出列，等待下次接收
 			{
-				return nullptr;
+				return "";
 			}
 			else	//_rear小于0,出现错误
 			{

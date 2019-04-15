@@ -159,6 +159,7 @@
     <ClInclude Include="LoginHandle.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PlayerData.h" />
+    <ClInclude Include="ThreadPool.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Command.cpp" />
@@ -175,6 +176,7 @@
     </ClCompile>
     <ClCompile Include="PlayerData.cpp" />
     <ClCompile Include="Server.cpp" />
+    <ClCompile Include="ThreadPool.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

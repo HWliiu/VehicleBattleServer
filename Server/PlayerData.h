@@ -4,15 +4,14 @@ namespace GameServer
 {
 	namespace Entity
 	{
-		using std::string;
 		class PlayerData
 		{
 		public:
-			string UserID;
-			string Username;
-			string Experience;
-			string Money;
-			string Level;
+			std::string UserID;
+			std::string Username;
+			std::string Experience;
+			std::string Money;
+			std::string Level;
 
 			PlayerData();
 			~PlayerData();

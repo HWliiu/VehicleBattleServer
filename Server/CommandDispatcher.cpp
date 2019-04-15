@@ -14,10 +14,10 @@ namespace GameServer
 		CommandDispatcher::~CommandDispatcher()
 		{
 		}
-		void CommandDispatcher::DispatchCommand(char* jsonData, std::function<void(std::string)> sendMessage)
+		void CommandDispatcher::DispatchCommand(std::string jsonData, std::function<void(std::string)> sendMessage)
 		{
 			Document document;
-			document.Parse(jsonData);
+			document.Parse(jsonData.c_str());
 
 			if (rapidjson::Value * commandValue = GetValueByPointer(document, "/Command"))
 			{

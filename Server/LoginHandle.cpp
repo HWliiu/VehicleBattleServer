@@ -5,7 +5,7 @@ namespace GameServer
 {
 	namespace Handle
 	{
-		void LoginHandle::Login(string username, string password, std::function<void(string)> sendMessage)
+		void LoginHandle::Login(std::string username, std::string password, std::function<void(std::string)> sendMessage)
 		{
 			// TODO: 正则表达式验证
 			auto session = DBUtil::GetInstance()->GetSession();
@@ -21,7 +21,7 @@ namespace GameServer
 			if (result.count() > 0)
 			{
 				auto row = result.fetchOne();
-				if ((string)row[1] == password)
+				if ((std::string)row[1] == password)
 				{
 					Pointer("/Paras/Result").Set(document, "succeed");
 					Pointer("/Paras/Info").Set(document, "登录成功");
@@ -49,13 +49,13 @@ namespace GameServer
 				sendMessage(output);
 			}
 		}
-		void LoginHandle::Logout(string username, std::function<void(std::string)> sendMessage)
+		void LoginHandle::Logout(std::string username, std::function<void(std::string)> sendMessage)
 		{
 			// TODO: 正则表达式验证
 			auto session = DBUtil::GetInstance()->GetSession();
 			auto accountTable = session.getDefaultSchema().getTable("account");
 		}
-		void LoginHandle::Register(string username, string password, std::function<void(string)> sendMessage)
+		void LoginHandle::Register(std::string username, std::string password, std::function<void(std::string)> sendMessage)
 		{
 			// TODO: 正则表达式验证
 			auto session = DBUtil::GetInstance()->GetSession();
@@ -66,8 +66,8 @@ namespace GameServer
 			StringBuffer buffer;
 			Writer<StringBuffer> writer(buffer);	// TODO: 建一个buffer池
 			//查找用户名是否已存在
-			auto result = accountTable.select("username").where("username=:username").limit(1).bind("username", username).lockShared().execute();
-			if (result.count() > 0)
+			auto rowResult = accountTable.select("username").where("username=:username").limit(1).bind("username", username).lockShared().execute();
+			if (rowResult.count() > 0)
 			{
 				Pointer("/Paras/Result").Set(document, "failure");
 				Pointer("/Paras/Info").Set(document, "该用户名已存在");
@@ -78,7 +78,7 @@ namespace GameServer
 			}
 			//添加用户
 			auto result = accountTable.insert("username", "password").values(username, password).execute();
-			if (result.getAffectedItemsCount == 1)
+			if (result.getAffectedItemsCount() == 1)
 			{
 				Pointer("/Paras/Result").Set(document, "succeed");
 				Pointer("/Paras/Info").Set(document, "注册成功");
