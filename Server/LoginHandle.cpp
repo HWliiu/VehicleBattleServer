@@ -23,11 +23,12 @@ namespace GameServer
 			StringBuffer buffer;
 			Writer<StringBuffer> writer(buffer);
 			// TODO: 查看用户是否已登录
+
 			//验证账号密码
-			auto result = accountTable.select("username", "password").where("username=:username").limit(1).bind("username", username).lockShared().execute();
-			if (result.count() > 0)
+			auto rowResult = accountTable.select("username", "password").where("username=:username").limit(1).bind("username", username).lockShared().execute();
+			if (rowResult.count() > 0)
 			{
-				auto row = result.fetchOne();
+				auto row = rowResult.fetchOne();
 				if ((std::string)row[1] == password)
 				{
 					Pointer("/Paras/Result").Set(document, "succeed");
