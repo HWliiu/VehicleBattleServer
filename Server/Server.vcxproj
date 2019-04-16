@@ -159,6 +159,7 @@
     <ClInclude Include="LoginHandle.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PlayerData.h" />
+    <ClInclude Include="Singleton.h" />
     <ClInclude Include="ThreadPool.h" />
   </ItemGroup>
   <ItemGroup>

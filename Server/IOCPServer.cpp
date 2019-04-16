@@ -206,7 +206,7 @@ namespace GameServer
 			}
 			//线程互斥执行
 			{
-				std::lock_guard<std::mutex> lck(_threadMtx);	//RAII
+				std::lock_guard<std::mutex> lock(_threadMtx);	//RAII
 				std::cout << inet_ntoa(lpPerHandleData->clientAddr.sin_addr) << ":" << ntohs(lpPerHandleData->clientAddr.sin_port) << Util::U2G(" 成功连接!") << std::endl;	  //使用inet_ntoa要关闭SDL检查
 			}
 			//将acceptSocket与完成端口绑定
@@ -227,22 +227,8 @@ namespace GameServer
 		{
 			//std::cout << Util::U2G("接收了") << dwBytesTransferred << Util::U2G("字节") << std::endl;
 			lpPerHandleData->recvMsgQueue.Enqueue(lpPerIoData->buffer, dwBytesTransferred);
-			// TODO: 用线程池来分发消息
-			while (true)
-			{
-				std::string message = lpPerHandleData->recvMsgQueue.Dequeue();
-				if (message.empty())
-				{
-					break;
-				}
-				else
-				{
-					///////////////////////////////////////////////////////
-					std::cout << "recv:" << Util::U2G(message.c_str()) << std::endl;
-					//lpPerHandleData->sendMessage(message);
-					_commandDispatcher.DispatchCommand(message, lpPerHandleData->sendMessage);
-				}
-			}
+			//用线程池来分发消息
+			//_commandDispatcher.StartDispatch(lpPerHandleData);
 
 			//清空lpPerIoData数据
 			_freeIoDataPool.Push(lpPerIoData);
@@ -315,6 +301,11 @@ namespace GameServer
 			return 0;
 		}
 
+		FreeIoDataPool::~FreeIoDataPool()
+		{
+			ReducePool(GetCount());
+		}
+
 		void FreeIoDataPool::Push(PerIoData* lpPerIoData)
 		{
 			if (lpPerIoData == nullptr) return;
@@ -325,7 +316,7 @@ namespace GameServer
 			lpPerIoData->operatorType = OperatorType::NONE;
 			lpPerIoData->acceptSocket = NULL;
 
-			std::lock_guard<std::mutex> lck(_ioDataPoolMtx);	//构造时自动上锁，析构时自动解锁
+			std::lock_guard<std::mutex> lock(_ioDataPoolMtx);	//构造时自动上锁，析构时自动解锁
 			_pool.push(lpPerIoData);
 		}
 
@@ -345,7 +336,7 @@ namespace GameServer
 		void FreeIoDataPool::FillPool(int count)
 		{
 			PerIoData* lpPerIoData;
-			std::lock_guard<std::mutex> lck(_ioDataPoolMtx);
+			std::lock_guard<std::mutex> lock(_ioDataPoolMtx);
 			for (size_t i = 0; i < count; i++)
 			{
 				//初始化PerIoData
@@ -377,7 +368,7 @@ namespace GameServer
 				std::cout << Util::U2G("BufferQueue大小不足!") << std::endl;
 				throw std::out_of_range("");
 			}
-			std::lock_guard<std::mutex> lck(_recvBufQueueMtx);
+			std::lock_guard<std::mutex> lock(_recvBufQueueMtx);
 			memcpy_s(_data + _rear, _TRUNCATE, buffer, size);
 			_rear += size;
 		}

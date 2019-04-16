@@ -16,7 +16,7 @@ namespace GameServer
 		public:
 			ThreadPool(size_t);
 			template<class F, class... Args>
-			auto Enqueue(F&& f, Args&& ... args)->std::future<typename std::result_of<F(Args...)>::type>;  //std::future用来获取异步任务的结果
+			auto Enqueue(F&& f, Args&& ... args)->std::future<decltype(f(args...))>;  //std::future用来获取异步任务的结果
 			~ThreadPool();
 		private:
 			// need to keep track of threads so we can join them
@@ -24,7 +24,7 @@ namespace GameServer
 			// the task queue
 			std::queue<std::function<void()>> _tasks;    //任务队列，用于存放没有处理的任务。提供缓冲机制
 			std::mutex _queueMtx;
-			std::condition_variable _condition;
+			std::condition_variable _condition;	//条件阻塞
 			bool _stop;
 		};
 	}

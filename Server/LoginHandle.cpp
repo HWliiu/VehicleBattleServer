@@ -1,8 +1,10 @@
 #include "pch.h"
 #include "LoginHandle.h"
+#include "DbUtil.h"
 
 namespace GameServer
 {
+	using namespace Util;
 	namespace Handle
 	{
 		void LoginHandle::Login(std::string username, std::string password, std::function<void(std::string)> sendMessage)

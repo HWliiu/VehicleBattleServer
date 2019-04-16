@@ -14,6 +14,24 @@ namespace GameServer
 		CommandDispatcher::~CommandDispatcher()
 		{
 		}
+		void CommandDispatcher::StartDispatch(PerHandleData* lpPerHandleData)
+		{
+			while (true)
+			{
+				std::string message = lpPerHandleData->recvMsgQueue.Dequeue();
+				if (message.empty())
+				{
+					break;
+				}
+				else
+				{
+					///////////////////////////////////////////////////////
+					std::cout << "recv:" << Util::U2G(message.c_str()) << std::endl;
+					//lpPerHandleData->sendMessage(message);
+					GetInstance()->DispatchCommand(message, lpPerHandleData->sendMessage);
+				}
+			}
+		}
 		void CommandDispatcher::DispatchCommand(std::string jsonData, std::function<void(std::string)> sendMessage)
 		{
 			Document document;

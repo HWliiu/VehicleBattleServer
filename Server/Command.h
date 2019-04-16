@@ -4,7 +4,6 @@
 #include "include/rapidjson/pointer.h"
 #include "include/rapidjson/stringbuffer.h"
 #include "include/rapidjson/writer.h"
-#include "HandleFactory.h"
 
 using namespace rapidjson;
 

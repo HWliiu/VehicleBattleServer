@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "Command.h"
+#include "HandleFactory.h"
+
 
 namespace GameServer
 {

@@ -12,7 +12,7 @@ namespace GameServer
 		{
 			if (_instance == nullptr)
 			{
-				std::lock_guard<std::mutex> lck(_mtx);
+				std::lock_guard<std::mutex> lock(_mtx);
 				if (_instance == nullptr)
 				{
 					_instance = new DBUtil();

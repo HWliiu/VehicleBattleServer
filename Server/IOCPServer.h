@@ -5,12 +5,12 @@
 #include <windows.h>
 #include <process.h>
 #include <exception>
-#include <functional> 
+//#include <functional> 
 #include <string>
-#include <mutex>
+//#include <mutex>
 #include <stack>
 #include <atomic>
-#include "CommandDispatcher.h"
+#include "ThreadPool.h"
 
 #pragma comment(lib,"ws2_32.lib")
 
@@ -62,6 +62,7 @@ namespace GameServer
 			const int FillSize;
 
 			FreeIoDataPool(int fillSize) : FillSize(fillSize) { }
+			~FreeIoDataPool();
 			void Push(PerIoData* lpPerIoData);
 			PerIoData* Pop();
 			int GetCount() { return _pool.size(); }
@@ -88,7 +89,6 @@ namespace GameServer
 			FreeIoDataPool _freeIoDataPool;
 			HANDLE _postAcceptEvent;
 			LPFN_ACCEPTEX _lpfnAcceptEx;
-			CommandDispatcher _commandDispatcher;
 
 			bool PostAccept();
 			bool PostRecv(SOCKET socket);
