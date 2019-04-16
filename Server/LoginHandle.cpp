@@ -1,10 +1,15 @@
 #include "pch.h"
+#include "include/rapidjson/document.h"
+#include "include/rapidjson/pointer.h"
+#include "include/rapidjson/stringbuffer.h"
+#include "include/rapidjson/writer.h"
 #include "LoginHandle.h"
 #include "DbUtil.h"
 
 namespace GameServer
 {
 	using namespace Util;
+	using namespace rapidjson;
 	namespace Handle
 	{
 		void LoginHandle::Login(std::string username, std::string password, std::function<void(std::string)> sendMessage)

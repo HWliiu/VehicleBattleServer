@@ -33,9 +33,6 @@
     <ClInclude Include="CommandDispatcher.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="HandleFactory.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="PlayerData.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -43,6 +40,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Singleton.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="HandleManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -68,13 +68,10 @@
     <ClCompile Include="LoginHandle.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="HandleFactory.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="PlayerData.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="ThreadPool.cpp">
+    <ClCompile Include="HandleManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

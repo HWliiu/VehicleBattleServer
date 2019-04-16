@@ -5,9 +5,9 @@
 #include <windows.h>
 #include <process.h>
 #include <exception>
-//#include <functional> 
+#include <functional> 
 #include <string>
-//#include <mutex>
+#include <mutex>
 #include <stack>
 #include <atomic>
 #include "ThreadPool.h"
@@ -33,7 +33,7 @@ namespace GameServer
 			void Enqueue(char* buffer, int size);
 			std::string Dequeue();
 		private:
-			static const int _size = DATA_BUFSIZE * 10;
+			static const int _size = DATA_BUFSIZE * 50;
 			int _rear = 0;
 			char _data[_size];
 			std::mutex _recvBufQueueMtx;
@@ -87,6 +87,7 @@ namespace GameServer
 			std::atomic_int _freeAcceptSockCount = { 0 };
 			std::mutex _threadMtx;
 			FreeIoDataPool _freeIoDataPool;
+			Util::ThreadPool _dispatchCmdThreadPool;
 			HANDLE _postAcceptEvent;
 			LPFN_ACCEPTEX _lpfnAcceptEx;
 

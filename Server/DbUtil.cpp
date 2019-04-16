@@ -5,22 +5,6 @@ namespace GameServer
 {
 	namespace Util
 	{
-		DBUtil* DBUtil::_instance = nullptr;
-		std::mutex DBUtil::_mtx;
-
-		DBUtil* DBUtil::GetInstance()
-		{
-			if (_instance == nullptr)
-			{
-				std::lock_guard<std::mutex> lock(_mtx);
-				if (_instance == nullptr)
-				{
-					_instance = new DBUtil();
-				}
-			}
-			return _instance;
-		}
-
 		Session DBUtil::GetSession()
 		{
 			return _client->getSession();	//Session有移动构造函数

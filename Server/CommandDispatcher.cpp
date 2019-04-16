@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "CommandDispatcher.h"
+#include "include/rapidjson/pointer.h"
 
 namespace GameServer
 {
@@ -13,6 +14,12 @@ namespace GameServer
 
 		CommandDispatcher::~CommandDispatcher()
 		{
+			for (auto iter = _commandMap.begin(); iter != _commandMap.end(); iter++)
+			{
+				delete iter->second;
+				iter->second = nullptr;
+				_commandMap.erase(iter);
+			}
 		}
 		void CommandDispatcher::StartDispatch(PerHandleData* lpPerHandleData)
 		{

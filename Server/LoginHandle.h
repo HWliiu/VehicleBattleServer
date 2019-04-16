@@ -1,14 +1,9 @@
 #pragma once
 #include <iostream>
 #include <functional>
-#include "include/rapidjson/document.h"
-#include "include/rapidjson/pointer.h"
-#include "include/rapidjson/stringbuffer.h"
-#include "include/rapidjson/writer.h"
 
 namespace GameServer
 {
-	using namespace rapidjson;
 	namespace Handle
 	{
 		//using std::string;	//rapidjson和mysqlx内部都有自己string的定义,要用std的string时统一用std::string,不要图方便用这个using

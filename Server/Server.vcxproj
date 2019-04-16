@@ -154,7 +154,7 @@
     <ClInclude Include="Command.h" />
     <ClInclude Include="CommandDispatcher.h" />
     <ClInclude Include="DBUtil.h" />
-    <ClInclude Include="HandleFactory.h" />
+    <ClInclude Include="HandleManager.h" />
     <ClInclude Include="IOCPServer.h" />
     <ClInclude Include="LoginHandle.h" />
     <ClInclude Include="pch.h" />
@@ -166,7 +166,7 @@
     <ClCompile Include="Command.cpp" />
     <ClCompile Include="CommandDispatcher.cpp" />
     <ClCompile Include="DBUtil.cpp" />
-    <ClCompile Include="HandleFactory.cpp" />
+    <ClCompile Include="HandleManager.cpp" />
     <ClCompile Include="IOCPServer.cpp" />
     <ClCompile Include="LoginHandle.cpp" />
     <ClCompile Include="pch.cpp">
@@ -177,7 +177,6 @@
     </ClCompile>
     <ClCompile Include="PlayerData.cpp" />
     <ClCompile Include="Server.cpp" />
-    <ClCompile Include="ThreadPool.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

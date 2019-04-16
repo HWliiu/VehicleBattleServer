@@ -10,7 +10,7 @@ using namespace GameServer::Service;
 
 int main()
 {
-	std::thread iocpServerThread([]() { (new IOCPServer(64, 512))->Start(); });
+	std::thread iocpServerThread([] { (new IOCPServer(64, 512))->Start(); });
 	// TODO: 
 	iocpServerThread.join();
 }

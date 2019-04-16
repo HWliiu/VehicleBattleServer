@@ -1,11 +1,12 @@
 #include "pch.h"
 #include "IOCPServer.h"
+#include "CommandDispatcher.h"
 
 namespace GameServer
 {
 	namespace Service
 	{
-		IOCPServer::IOCPServer(int postAcceptCount, int freeIoDataCount, int port) : _postAcceptCount(postAcceptCount), _freeIoDataPool(freeIoDataCount)
+		IOCPServer::IOCPServer(int postAcceptCount, int freeIoDataCount, int port) : _postAcceptCount(postAcceptCount), _freeIoDataPool(freeIoDataCount), _dispatchCmdThreadPool(4)
 		{
 			//初始化socket
 			WORD versionRequest = MAKEWORD(2, 2);
@@ -79,7 +80,7 @@ namespace GameServer
 			//创建工作线程
 			SYSTEM_INFO sysInfo;
 			GetSystemInfo(&sysInfo);
-			for (size_t i = 0; i < sysInfo.dwNumberOfProcessors * 2; i++)
+			for (size_t i = 0; i < sysInfo.dwNumberOfProcessors; i++)
 			{
 				HANDLE thread = (HANDLE)_beginthreadex(NULL, 0, WorksThread, this, 0, NULL);
 				if (thread == NULL)
@@ -227,8 +228,8 @@ namespace GameServer
 		{
 			//std::cout << Util::U2G("接收了") << dwBytesTransferred << Util::U2G("字节") << std::endl;
 			lpPerHandleData->recvMsgQueue.Enqueue(lpPerIoData->buffer, dwBytesTransferred);
-			//用线程池来分发消息
-			//_commandDispatcher.StartDispatch(lpPerHandleData);
+			//用线程池来分发消息,不阻塞消息接收
+			_dispatchCmdThreadPool.Enqueue(&CommandDispatcher::StartDispatch, lpPerHandleData);
 
 			//清空lpPerIoData数据
 			_freeIoDataPool.Push(lpPerIoData);
@@ -326,7 +327,7 @@ namespace GameServer
 			{
 				FillPool(FillSize);
 			}
-			std::lock_guard<std::mutex> lck(_ioDataPoolMtx);
+			std::lock_guard<std::mutex> lock(_ioDataPoolMtx);
 			PerIoData* lpPerIoData = _pool.top();
 			_pool.pop();
 

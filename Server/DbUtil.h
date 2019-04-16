@@ -1,6 +1,6 @@
 #pragma once
-#include <mutex>
 #include "include\mysqlx\xdevapi.h"
+#include "Singleton.h"
 #pragma  comment(lib,"lib\\mysqlcppconn8.lib") //这个文件是用vs2019编译的x64 debug版本
 
 using namespace mysqlx;
@@ -8,14 +8,12 @@ namespace GameServer
 {
 	namespace Util
 	{
-		class DBUtil
+		class DBUtil :public Singleton<DBUtil>
 		{
 		public:
-			static DBUtil* GetInstance();
+			friend class Singleton<DBUtil>;
 			Session GetSession();
 		private:
-			static DBUtil* _instance;
-			static std::mutex _mtx;
 			Client* _client;	//Client为xdevapi提供的Session池类
 
 			std::string _host;
