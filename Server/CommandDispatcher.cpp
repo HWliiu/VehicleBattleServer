@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CommandDispatcher.h"
 #include "include/rapidjson/pointer.h"
+#include "SmallTools.h"
 
 namespace GameServer
 {
@@ -33,9 +34,9 @@ namespace GameServer
 				else
 				{
 					///////////////////////////////////////////////////////
-					std::cout << "recv:" << Util::U2G(message.c_str()) << std::endl;
+					std::cout << "recv:" << U2G(message.c_str()) << std::endl;
 					//lpPerHandleData->sendMessage(message);
-					GetInstance()->DispatchCommand(message, lpPerHandleData->sendMessage);
+					GetInstance()->DispatchCommand(message, lpPerHandleData->sendMessageFn);
 				}
 			}
 		}

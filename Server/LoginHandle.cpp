@@ -5,6 +5,7 @@
 #include "include/rapidjson/writer.h"
 #include "LoginHandle.h"
 #include "DbUtil.h"
+#include "SmallTools.h"
 
 namespace GameServer
 {
@@ -34,6 +35,9 @@ namespace GameServer
 					Pointer("/Paras/Result").Set(document, "succeed");
 					Pointer("/Paras/Info").Set(document, "登录成功");
 					// TODO: 记录信息
+					accountTable.update().set("last_login_time", GetCurTime()).where("username=:username").limit(1).bind("username", username).execute();
+
+
 					document.Accept(writer);
 					const char* output = buffer.GetString();
 					sendMessage(output);
@@ -46,7 +50,6 @@ namespace GameServer
 					const char* output = buffer.GetString();
 					sendMessage(output);
 				}
-
 			}
 			else
 			{
@@ -74,8 +77,8 @@ namespace GameServer
 			StringBuffer buffer;
 			Writer<StringBuffer> writer(buffer);	// TODO: 建一个buffer池
 			//查找用户名是否已存在
-			auto rowResult = accountTable.select("username").where("username=:username").limit(1).bind("username", username).lockShared().execute();
-			if (rowResult.count() > 0)
+			auto userRowResult = accountTable.select("username").where("username=:username").limit(1).bind("username", username).lockShared().execute();
+			if (userRowResult.count() > 0)
 			{
 				Pointer("/Paras/Result").Set(document, "failure");
 				Pointer("/Paras/Info").Set(document, "该用户名已存在");
@@ -85,9 +88,16 @@ namespace GameServer
 				return;
 			}
 			//添加用户
-			auto result = accountTable.insert("username", "password").values(username, password).execute();
-			if (result.getAffectedItemsCount() == 1)
+			session.startTransaction();
+			auto insertResult = accountTable.insert("username", "password", "register_time").values(username, password, GetCurTime()).execute();
+			if (insertResult.getAffectedItemsCount() == 1)
 			{
+				//添加初始信息
+				int userId = accountTable.select("user_id").where("username=:username").limit(1).bind("username", username).execute().fetchOne()[0];
+				auto possessVehicle = session.getDefaultSchema().getTable("possess_vehicle");
+				possessVehicle.insert("user_id", "vehicle_id").values(userId, 1).execute();	//默认拥有id为1的载具
+				session.commit();
+
 				Pointer("/Paras/Result").Set(document, "succeed");
 				Pointer("/Paras/Info").Set(document, "注册成功");
 				document.Accept(writer);
@@ -96,6 +106,7 @@ namespace GameServer
 			}
 			else
 			{
+				session.rollback();
 				Pointer("/Paras/Result").Set(document, "failure");
 				Pointer("/Paras/Info").Set(document, "注册失败");
 				document.Accept(writer);

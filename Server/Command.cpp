@@ -10,7 +10,7 @@ namespace GameServer
 	{
 		void LoginCommand::Execute(Document document, std::function<void(std::string)> sendMessage)
 		{
-			rapidjson::Value* username = Pointer("/Paras/Username").Get(document);
+			rapidjson::Value* username = Pointer("/Paras/UserName").Get(document);
 			rapidjson::Value* password = Pointer("/Paras/Password").Get(document);
 
 			auto pLoginHandle = HandleManager::GetInstance()->GetLoginHandle();
@@ -18,7 +18,7 @@ namespace GameServer
 		}
 		void RegisterCommand::Execute(Document document, std::function<void(std::string)> sendMessage)
 		{
-			rapidjson::Value* username = Pointer("/Paras/Username").Get(document);
+			rapidjson::Value* username = Pointer("/Paras/UserName").Get(document);
 			rapidjson::Value* password = Pointer("/Paras/Password").Get(document);
 
 			auto pLoginHandle = HandleManager::GetInstance()->GetLoginHandle();

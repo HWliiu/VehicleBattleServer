@@ -33,9 +33,6 @@
     <ClInclude Include="CommandDispatcher.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerData.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="ThreadPool.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -43,6 +40,18 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="HandleManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SmallTools.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerModel.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="VehicleModel.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="EquipmentModel.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -68,10 +77,16 @@
     <ClCompile Include="LoginHandle.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerData.cpp">
+    <ClCompile Include="HandleManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="HandleManager.cpp">
+    <ClCompile Include="PlayerModel.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="VehicleModel.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="EquipmentModel.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

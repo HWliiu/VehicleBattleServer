@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "IOCPServer.h"
 #include "CommandDispatcher.h"
+#include "SmallTools.h"
 
 namespace GameServer
 {
@@ -194,8 +195,8 @@ namespace GameServer
 			//创建acceptSocket的PerHandleData
 			PerHandleData* lpPerHandleData = new PerHandleData();
 			lpPerHandleData->socket = lpPerIoData->acceptSocket;
-			//lpPerHandleData->sendMessage = [this, lpPerHandleData](std::string msg) { PostSend(lpPerHandleData->socket, msg); };	//注册回调
-			lpPerHandleData->sendMessage = std::bind(&IOCPServer::PostSend, this, lpPerHandleData->socket, std::placeholders::_1);
+			//lpPerHandleData->sendMessageFn = [this, lpPerHandleData](std::string msg) { PostSend(lpPerHandleData->socket, msg); };	//注册回调
+			lpPerHandleData->sendMessageFn = std::bind(&IOCPServer::PostSend, this, lpPerHandleData->socket, std::placeholders::_1);
 			//获取客户端地址
 			int clientAddrLen = sizeof(SOCKADDR_IN);
 			if (getpeername(lpPerHandleData->socket, (SOCKADDR*)& lpPerHandleData->clientAddr, &clientAddrLen) == SOCKET_ERROR)
