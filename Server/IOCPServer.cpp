@@ -3,12 +3,21 @@
 #include "CommandDispatcher.h"
 #include "SmallTools.h"
 
+#pragma comment(lib,"ws2_32.lib")
+
 namespace GameServer
 {
 	namespace Service
 	{
-		IOCPServer::IOCPServer(int postAcceptCount, int freeIoDataCount, int port) : _postAcceptCount(postAcceptCount), _freeIoDataPool(freeIoDataCount), _dispatchCmdThreadPool(4)
+		IOCPServer::IOCPServer()
 		{
+			_address = "localhost";
+			_port = 8080;
+			_postAcceptCount = 64;
+			_freeAcceptSockCount = 0;
+			_spFreeIoDataPool = std::make_shared<FreeIoDataPool>(512);
+			_spDispatchCmdThreadPool = std::make_shared<Util::ThreadPool>(4);
+
 			//初始化socket
 			WORD versionRequest = MAKEWORD(2, 2);
 			WSADATA wsaData;
@@ -21,7 +30,7 @@ namespace GameServer
 			sockaddr_in addr;
 			addr.sin_family = AF_INET;
 			addr.sin_addr.S_un.S_addr = INADDR_ANY;
-			addr.sin_port = htons(port);
+			addr.sin_port = htons(_port);
 			//创建监听socket
 			_listenSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 			if (_listenSocket == INVALID_SOCKET)
@@ -61,12 +70,11 @@ namespace GameServer
 			//创建自动投递事件
 			_postAcceptEvent = CreateEvent(NULL, false, true, NULL);//初始有信号自动复位事件
 			//初始化IoDataPool
-			_freeIoDataPool.FillPool(_freeIoDataPool.FillSize);
+			_spFreeIoDataPool->FillPool(_spFreeIoDataPool->FillSize);
 		}
 
 		IOCPServer::~IOCPServer()
 		{
-			// TODO: 清理资源
 		}
 
 
@@ -113,7 +121,7 @@ namespace GameServer
 		bool IOCPServer::PostAccept()
 		{
 			DWORD dwBytesRecvd = 0;
-			PerIoData* lpPerIoData = _freeIoDataPool.Pop();
+			PerIoData* lpPerIoData = _spFreeIoDataPool->Pop();
 			lpPerIoData->operatorType = OperatorType::ACCEPT;
 			lpPerIoData->acceptSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 			//投递acceptEx
@@ -124,7 +132,7 @@ namespace GameServer
 					std::cout << Util::U2G("投递acceptEx失败！错误代码：") << WSAGetLastError() << std::endl;
 					//清理资源
 					closesocket(lpPerIoData->acceptSocket);
-					_freeIoDataPool.Push(lpPerIoData);
+					_spFreeIoDataPool->Push(lpPerIoData);
 					return false;
 				}
 			}
@@ -136,14 +144,14 @@ namespace GameServer
 		bool IOCPServer::PostRecv(SOCKET socket)
 		{
 			DWORD dwFlags = 0;
-			PerIoData* lpPerIoData = _freeIoDataPool.Pop();
+			PerIoData* lpPerIoData = _spFreeIoDataPool->Pop();
 			lpPerIoData->operatorType = OperatorType::RECV;         //将状态设置成接收
 			if (WSARecv(socket, &lpPerIoData->wsabuf, 1, NULL, &dwFlags, &lpPerIoData->overlapped, NULL) == SOCKET_ERROR)
 			{
 				if (GetLastError() != ERROR_IO_PENDING)
 				{
 					std::cout << Util::U2G("WSARecv失败！错误代码：") << WSAGetLastError() << std::endl;
-					_freeIoDataPool.Push(lpPerIoData);
+					_spFreeIoDataPool->Push(lpPerIoData);
 					return false;
 				}
 			}
@@ -153,10 +161,10 @@ namespace GameServer
 		bool IOCPServer::PostSend(SOCKET socket, std::string msg)
 		{
 			DWORD dwFlags = 0;
-			PerIoData* lpPerIoData = _freeIoDataPool.Pop();
+			PerIoData* lpPerIoData = _spFreeIoDataPool->Pop();
 			lpPerIoData->operatorType = OperatorType::SEND;         //将状态设置成发送
 			int msgLen = msg.length();
-			///////////////////////////////
+			///////////////////////////////////////////////////////////
 			std::cout << "send:" << Util::U2G(msg.c_str()) << std::endl;
 			memcpy_s(lpPerIoData->wsabuf.buf, _TRUNCATE, (byte*)& msgLen, 4);	//封装包头
 			strncpy_s(lpPerIoData->wsabuf.buf + 4, _TRUNCATE, msg.c_str(), msgLen);	//封装数据
@@ -168,7 +176,7 @@ namespace GameServer
 				if (GetLastError() != ERROR_IO_PENDING)
 				{
 					std::cout << Util::U2G("WSASend失败！错误代码：") << WSAGetLastError() << std::endl;
-					_freeIoDataPool.Push(lpPerIoData);
+					_spFreeIoDataPool->Push(lpPerIoData);
 					return false;
 				}
 			}
@@ -189,7 +197,7 @@ namespace GameServer
 			{
 				std::cout << Util::U2G("setsockopt失败！错误代码：") << GetLastError() << std::endl;
 				//清空lpPerIoData数据
-				_freeIoDataPool.Push(lpPerIoData);
+				_spFreeIoDataPool->Push(lpPerIoData);
 				return;
 			}
 			//创建acceptSocket的PerHandleData
@@ -203,7 +211,7 @@ namespace GameServer
 			{
 				std::cout << Util::U2G("getpeername失败！错误代码：") << GetLastError() << std::endl;
 				//清空lpPerIoData数据
-				_freeIoDataPool.Push(lpPerIoData);
+				_spFreeIoDataPool->Push(lpPerIoData);
 				return;
 			}
 			//线程互斥执行
@@ -216,11 +224,11 @@ namespace GameServer
 			{
 				std::cout << Util::U2G("acceptSocket绑定到io完成端口失败！错误代码：") << GetLastError() << std::endl;
 				//清空lpPerIoData数据
-				_freeIoDataPool.Push(lpPerIoData);
+				_spFreeIoDataPool->Push(lpPerIoData);
 				return;
 			}
 			//清空lpPerIoData数据
-			_freeIoDataPool.Push(lpPerIoData);
+			_spFreeIoDataPool->Push(lpPerIoData);
 			//投递WASRecv
 			PostRecv(lpPerHandleData->socket);
 		}
@@ -230,10 +238,10 @@ namespace GameServer
 			//std::cout << Util::U2G("接收了") << dwBytesTransferred << Util::U2G("字节") << std::endl;
 			lpPerHandleData->recvMsgQueue.Enqueue(lpPerIoData->buffer, dwBytesTransferred);
 			//用线程池来分发消息,不阻塞消息接收
-			_dispatchCmdThreadPool.Enqueue(&CommandDispatcher::StartDispatch, lpPerHandleData);
+			_spDispatchCmdThreadPool->Enqueue(&CommandDispatcher::StartDispatch, lpPerHandleData);
 
 			//清空lpPerIoData数据
-			_freeIoDataPool.Push(lpPerIoData);
+			_spFreeIoDataPool->Push(lpPerIoData);
 			//继续投递WSARecv
 			PostRecv(lpPerHandleData->socket);
 		}
@@ -242,8 +250,24 @@ namespace GameServer
 		{
 			//std::cout << Util::U2G("发送了") << dwBytesTransferred << Util::U2G("字节") << std::endl;
 			//清空lpPerIoData数据
-			_freeIoDataPool.Push(lpPerIoData);
+			_spFreeIoDataPool->Push(lpPerIoData);
 
+		}
+
+		void IOCPServer::ProcessDisconnect(PerHandleData* lpPerHandleData, PerIoData* lpPerIoData)
+		{
+			if (lpPerHandleData != nullptr)
+			{
+				//通知业务逻辑进行处理
+				CommandDispatcher::GetInstance()->NotifyDisconnect(lpPerHandleData->socket);
+				closesocket(lpPerHandleData->socket);
+				delete lpPerHandleData;
+				lpPerHandleData = nullptr;
+			}
+			if (lpPerIoData != nullptr)
+			{
+				_spFreeIoDataPool->Push(lpPerIoData);
+			}
 		}
 
 		unsigned int __stdcall IOCPServer::WorksThread(LPVOID lpParam)
@@ -259,29 +283,15 @@ namespace GameServer
 				if (GetQueuedCompletionStatus(pThis->_completionPort, &dwBytesTransferred, (PULONG_PTR)& lpPerHandleData, (LPOVERLAPPED*)& lpPerIoData, INFINITE) == NULL)
 				{
 					std::cout << Util::U2G("GetQueuedCompletionStatus失败！错误代码：") << GetLastError() << std::endl;
-					if (lpPerHandleData != nullptr)
-					{
-						closesocket(lpPerHandleData->socket);
-						delete lpPerHandleData;
-						lpPerHandleData = nullptr;
-					}
-					if (lpPerIoData != nullptr)
-					{
-						pThis->_freeIoDataPool.Push(lpPerIoData);
-					}
-					//socket要与完成端口解除绑定吗?网络异常这一块还不了解
+					pThis->ProcessDisconnect(lpPerHandleData, lpPerIoData);
 					return -1;
 				}
 				//主动判断连接是否断开
 				if (dwBytesTransferred == 0 && (lpPerIoData->operatorType == OperatorType::RECV || lpPerIoData->operatorType == OperatorType::SEND))
 				{
 					std::cout << inet_ntoa(lpPerHandleData->clientAddr.sin_addr) << ":" << ntohs(lpPerHandleData->clientAddr.sin_port) << Util::U2G(" 断开连接!") << std::endl;
-					// TODO: 发送断开命令给业务逻辑进行处理
-
-					closesocket(lpPerHandleData->socket);
-					delete lpPerHandleData;
-					lpPerHandleData = nullptr;
-					pThis->_freeIoDataPool.Push(lpPerIoData);
+					pThis->ProcessDisconnect(lpPerHandleData, lpPerIoData);
+					return -1;
 				}
 
 				switch (lpPerIoData->operatorType)

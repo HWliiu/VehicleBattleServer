@@ -2,6 +2,7 @@
 #include "CommandDispatcher.h"
 #include "include/rapidjson/pointer.h"
 #include "SmallTools.h"
+#include "PlayerManager.h"
 
 namespace GameServer
 {
@@ -11,7 +12,6 @@ namespace GameServer
 		{
 			InitCommandMap();
 		}
-
 
 		CommandDispatcher::~CommandDispatcher()
 		{
@@ -33,27 +33,42 @@ namespace GameServer
 				}
 				else
 				{
-					///////////////////////////////////////////////////////
+					/////////////////////////////////////////////////////////
 					std::cout << "recv:" << U2G(message.c_str()) << std::endl;
-					//lpPerHandleData->sendMessage(message);
-					GetInstance()->DispatchCommand(message, lpPerHandleData->sendMessageFn);
+					GetInstance()->DispatchCommand(message, lpPerHandleData->socket, lpPerHandleData->sendMessageFn);
 				}
 			}
 		}
-		void CommandDispatcher::DispatchCommand(std::string jsonData, std::function<void(std::string)> sendMessage)
+		void CommandDispatcher::NotifyDisconnect(unsigned __int64 connSocket)
+		{
+			auto player = Entity::PlayerManager::GetInstance()->GetPlayerBySocket(connSocket);
+			if (player != nullptr)
+			{
+				Entity::PlayerManager::GetInstance()->RemovePlayer(player->GetUserId());
+			}
+		}
+		void CommandDispatcher::DispatchCommand(std::string jsonData, unsigned __int64 connSocket, std::function<void(std::string)> sendMessage)
 		{
 			Document document;
-			document.Parse(jsonData.c_str());
+			try
+			{
+				document.Parse(jsonData.c_str());
+			}
+			catch (const std::exception&)
+			{
+				printf("document parse error\n");
+				return;
+			}
 
 			if (rapidjson::Value * commandValue = GetValueByPointer(document, "/Command"))
 			{
-				std::string command = commandValue->GetString();	//注意:这里执行了移动语义，commandValue所指向的Command在下一条语句被清空了
+				std::string command = commandValue->GetString();
 				EraseValueByPointer(document, "/Command");
 
 				auto iter = _commandMap.find(command);
 				if (iter != _commandMap.end())
 				{
-					_commandMap[iter->first]->Execute(std::move(document), sendMessage);	//注意:Document实现了移动语义
+					_commandMap[iter->first]->Execute(std::move(document), connSocket, sendMessage);
 				}
 				else
 				{

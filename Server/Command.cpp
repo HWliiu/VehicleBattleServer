@@ -1,29 +1,31 @@
 #include "pch.h"
 #include "Command.h"
-#include "HandleManager.h"
 #include "include/rapidjson/pointer.h"
+#include "HandleManager.h"
 
 namespace GameServer
 {
 	using namespace Handle;
 	namespace Command
 	{
-		void LoginCommand::Execute(Document document, std::function<void(std::string)> sendMessage)
+		void LoginCommand::Execute(Document document, unsigned __int64 connSocket, std::function<void(std::string)> sendMessage)
 		{
 			rapidjson::Value* username = Pointer("/Paras/UserName").Get(document);
 			rapidjson::Value* password = Pointer("/Paras/Password").Get(document);
 
 			auto pLoginHandle = HandleManager::GetInstance()->GetLoginHandle();
-			pLoginHandle->Login(username->GetString(), password->GetString(), sendMessage);
+			pLoginHandle->Login(username->GetString(), password->GetString(), connSocket, sendMessage);
 		}
-		void RegisterCommand::Execute(Document document, std::function<void(std::string)> sendMessage)
+		void RegisterCommand::Execute(Document document, unsigned __int64 connSocket, std::function<void(std::string)> sendMessage)
 		{
 			rapidjson::Value* username = Pointer("/Paras/UserName").Get(document);
 			rapidjson::Value* password = Pointer("/Paras/Password").Get(document);
 
 			auto pLoginHandle = HandleManager::GetInstance()->GetLoginHandle();
-			pLoginHandle->Register(username->GetString(), password->GetString(), sendMessage);
+			pLoginHandle->Register(username->GetString(), password->GetString(), connSocket, sendMessage);
+		}
+		void LogoutCommand::Execute(Document document, unsigned __int64 connSocket, std::function<void(std::string)> sendMessage)
+		{
 		}
 	}
 }
-

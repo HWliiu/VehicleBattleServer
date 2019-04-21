@@ -12,10 +12,17 @@ namespace GameServer
 		{
 		public:
 			friend class Singleton<HandleManager>;
-			LoginHandle *GetLoginHandle();
+			inline LoginHandle* GetLoginHandle() { return _pLoginHandle; }
 		private:
-			HandleManager();
-			~HandleManager();
+			HandleManager()
+			{
+				_pLoginHandle = new LoginHandle();
+			}
+			~HandleManager()
+			{
+				delete _pLoginHandle;
+				_pLoginHandle = nullptr;
+			}
 
 			LoginHandle* _pLoginHandle;
 		};

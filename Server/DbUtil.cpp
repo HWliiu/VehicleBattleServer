@@ -7,7 +7,7 @@ namespace GameServer
 	{
 		Session DBUtil::GetSession()
 		{
-			return _client->getSession();	//Session有移动构造函数
+			return _client->getSession();
 		}
 
 		DBUtil::DBUtil()

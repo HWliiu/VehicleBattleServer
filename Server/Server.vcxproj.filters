@@ -54,6 +54,15 @@
     <ClInclude Include="EquipmentModel.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="PlayerManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomModel.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -66,9 +75,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DBUtil.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Command.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="CommandDispatcher.cpp">
@@ -87,6 +93,18 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="EquipmentModel.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomModel.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Command.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

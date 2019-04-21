@@ -15,13 +15,14 @@ namespace GameServer
 		public:
 			friend class Singleton<CommandDispatcher>;
 			static void StartDispatch(PerHandleData* lpPerHandleData);
+			void NotifyDisconnect(unsigned __int64 connSocket);
 		private:
 			std::unordered_map<std::string, ICommand*> _commandMap;
 
 			CommandDispatcher();
 			~CommandDispatcher();
 			void InitCommandMap();
-			void DispatchCommand(std::string jsonData, std::function<void(std::string)> sendMessage);
+			void DispatchCommand(std::string jsonData, unsigned __int64 connSocket, std::function<void(std::string)> sendMessage);
 		};
 	}
 }

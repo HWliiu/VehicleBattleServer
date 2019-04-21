@@ -1,7 +1,7 @@
 #pragma once
 #include "include\mysqlx\xdevapi.h"
 #include "Singleton.h"
-#pragma  comment(lib,"lib\\mysqlcppconn8.lib") //这个文件是用vs2019编译的x64 debug版本
+#pragma  comment(lib,"lib\\mysqlcppconn8.lib") //这个文件是connector/c++ 8.0.15的x64 debug版本
 
 using namespace mysqlx;
 namespace GameServer

@@ -5,7 +5,7 @@ namespace GameServer
 {
 	namespace Handle
 	{
-		HandleManager::HandleManager()
+		/*HandleManager::HandleManager()
 		{
 			_pLoginHandle = new LoginHandle();
 		}
@@ -19,6 +19,6 @@ namespace GameServer
 		LoginHandle* HandleManager::GetLoginHandle()
 		{
 			return _pLoginHandle;
-		}
+		}*/
 	}
 }

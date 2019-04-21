@@ -4,15 +4,13 @@
 #include <mswsock.h>
 #include <windows.h>
 #include <process.h>
+#include <functional>
 #include <exception>
-#include <functional> 
 #include <string>
 #include <mutex>
 #include <stack>
 #include <atomic>
 #include "ThreadPool.h"
-
-#pragma comment(lib,"ws2_32.lib")
 
 namespace GameServer
 {
@@ -76,18 +74,20 @@ namespace GameServer
 		class IOCPServer
 		{
 		public:
-			IOCPServer(int postAcceptCount, int freeIoDataCount, int port = 8080);
+			IOCPServer();
 			~IOCPServer();
 			void Start();
 			bool Stop();
 		private:
 			SOCKET _listenSocket;
 			HANDLE _completionPort;
+			std::string _address;
+			int _port;
 			int _postAcceptCount;
-			std::atomic_int _freeAcceptSockCount = { 0 };
+			std::atomic_int _freeAcceptSockCount;
 			std::mutex _threadMtx;
-			FreeIoDataPool _freeIoDataPool;
-			Util::ThreadPool _dispatchCmdThreadPool;
+			std::shared_ptr<FreeIoDataPool> _spFreeIoDataPool;
+			std::shared_ptr<Util::ThreadPool> _spDispatchCmdThreadPool;
 			HANDLE _postAcceptEvent;
 			LPFN_ACCEPTEX _lpfnAcceptEx;
 
@@ -97,6 +97,8 @@ namespace GameServer
 			void ProcessAccept(PerHandleData* lpListenSockHandleData, PerIoData* lpPerIoData);
 			void ProcessRecv(PerHandleData* lpPerHandleData, PerIoData* lpPerIoData, DWORD dwBytesTransferred);
 			void ProcessSend(PerHandleData* lpPerHandleData, PerIoData* lpPerIoData, DWORD dwBytesTransferred);
+
+			void ProcessDisconnect(PerHandleData* lpPerHandleData, PerIoData* lpPerIoData);
 
 			static unsigned int WINAPI WorksThread(LPVOID lpParam);
 		};
