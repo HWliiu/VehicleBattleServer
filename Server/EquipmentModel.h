@@ -5,7 +5,7 @@ namespace GameServer
 {
 	namespace Entity
 	{
-		//道具功能去掉了，做不来！！！
+		//道具功能不打算做，做不来！！！
 		class EquipmentModel
 		{
 		public:
