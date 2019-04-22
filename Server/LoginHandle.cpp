@@ -36,8 +36,8 @@ namespace GameServer
 				auto money = to_string((int)accountRow[4]);
 				auto level = to_string((int)accountRow[5]);
 				auto curVehicleId = to_string((int)accountRow[6]);
-				auto registerTime = accountRow[7].isNull() ? "" : (std::string)accountRow[7];
-				auto lastLoginTime = accountRow[8].isNull() ? "" : (std::string)accountRow[8];
+				auto registerTime = accountRow[7].isNull() ? "" :((std::string)accountRow[7]);
+				auto lastLoginTime = accountRow[8].isNull() ? "" : ((std::string)accountRow[8]);
 				//验证密码
 				if (pwd == password)
 				{
@@ -50,7 +50,7 @@ namespace GameServer
 							//下线并重新登录
 							//Logout(player->GetUserId(), player->ConnSocket, player->SendMessageFn);
 							PlayerManager::GetInstance()->RemovePlayer(id);
-							closesocket(player->ConnSocket);	//只在这里服务器主动关闭套接字
+							closesocket(player->ConnSocket);	//只在这里以及客户端意外断线时服务器主动关闭套接字
 						}
 						else
 						{
@@ -72,8 +72,8 @@ namespace GameServer
 					Pointer("/Paras/UserInfo/Money").Set(document, money.c_str());
 					Pointer("/Paras/UserInfo/Level").Set(document, level.c_str());
 					Pointer("/Paras/UserInfo/CurVehicleId").Set(document, curVehicleId.c_str());
-					/*Pointer("/Paras/UserInfo/RegisterTime").Set(document, registerTime.c_str());
-					Pointer("/Paras/UserInfo/LastLoginTime").Set(document, lastLoginTime.c_str());*/
+					Pointer("/Paras/UserInfo/RegisterTime").Set(document, registerTime.c_str());
+					Pointer("/Paras/UserInfo/LastLoginTime").Set(document, lastLoginTime.c_str());
 					//获取装备信息
 					auto vehicleResult = session.sql("SELECT "
 						"vehicle.vehicle_id, "
