@@ -31,6 +31,13 @@ namespace GameServer
 		public:
 			virtual void Execute(Document document, unsigned __int64 connSocket, std::function<void(std::string)> sendMessage) override;
 		};
+
+		class ChangePasswordCommand :public ICommand
+		{
+		public:
+			virtual void Execute(Document document, unsigned __int64 connSocket, std::function<void(std::string)> sendMessage) override;
+		};
+
 	}
 }
 

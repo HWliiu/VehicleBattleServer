@@ -87,6 +87,7 @@ namespace GameServer
 			//所有命令到这里注册(键要跟客户端定义的命令常量匹配)
 			_commandMap["RequestLogin"] = new LoginCommand();
 			_commandMap["RequestRegister"] = new RegisterCommand();
+			_commandMap["ChangePasswordCommand"] = new ChangePasswordCommand();
 		}
 	}
 }

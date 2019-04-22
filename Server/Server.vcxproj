@@ -157,7 +157,7 @@
     <ClInclude Include="EquipmentModel.h" />
     <ClInclude Include="HandleManager.h" />
     <ClInclude Include="IOCPServer.h" />
-    <ClInclude Include="LoginHandle.h" />
+    <ClInclude Include="AccountHandle.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PlayerManager.h" />
     <ClInclude Include="PlayerModel.h" />
@@ -173,9 +173,8 @@
     <ClCompile Include="CommandDispatcher.cpp" />
     <ClCompile Include="DBUtil.cpp" />
     <ClCompile Include="EquipmentModel.cpp" />
-    <ClCompile Include="HandleManager.cpp" />
     <ClCompile Include="IOCPServer.cpp" />
-    <ClCompile Include="LoginHandle.cpp" />
+    <ClCompile Include="AccountHandle.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

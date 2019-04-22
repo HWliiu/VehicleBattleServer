@@ -284,14 +284,14 @@ namespace GameServer
 				{
 					std::cout << Util::U2G("GetQueuedCompletionStatus失败！错误代码：") << GetLastError() << std::endl;
 					pThis->ProcessDisconnect(lpPerHandleData, lpPerIoData);
-					return -1;
+					continue;
 				}
 				//主动判断连接是否断开
 				if (dwBytesTransferred == 0 && (lpPerIoData->operatorType == OperatorType::RECV || lpPerIoData->operatorType == OperatorType::SEND))
 				{
 					std::cout << inet_ntoa(lpPerHandleData->clientAddr.sin_addr) << ":" << ntohs(lpPerHandleData->clientAddr.sin_port) << Util::U2G(" 断开连接!") << std::endl;
 					pThis->ProcessDisconnect(lpPerHandleData, lpPerIoData);
-					return -1;
+					continue;
 				}
 
 				switch (lpPerIoData->operatorType)

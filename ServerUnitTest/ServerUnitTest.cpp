@@ -20,7 +20,7 @@ namespace ServerUnitTest
 		}
 		TEST_METHOD(RegisterTestMethod)
 		{
-			LoginHandle loginHandle;
+			AccountHandle loginHandle;
 			loginHandle.Register("test", "123123", 0, [](std::string s) {});
 		}
 	};

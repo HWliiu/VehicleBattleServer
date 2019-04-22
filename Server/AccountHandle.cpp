@@ -3,10 +3,11 @@
 #include "include/rapidjson/pointer.h"
 #include "include/rapidjson/stringbuffer.h"
 #include "include/rapidjson/writer.h"
-#include "LoginHandle.h"
+#include "AccountHandle.h"
 #include "DbUtil.h"
 #include "SmallTools.h"
 #include "PlayerManager.h"
+
 
 namespace GameServer
 {
@@ -15,7 +16,9 @@ namespace GameServer
 	using namespace rapidjson;
 	namespace Handle
 	{
-		void LoginHandle::Login(std::string username, std::string password, unsigned __int64 connSocket, std::function<void(std::string)> sendMessage)
+		static const char* SUCCEED = "succeed";
+		static const char* FAILURE = "failure";
+		void AccountHandle::Login(std::string username, std::string password, unsigned __int64 connSocket, std::function<void(std::string)> sendMessage)
 		{
 			auto session = DBUtil::GetInstance()->GetSession();
 			auto accountTable = session.getDefaultSchema().getTable("account");
@@ -54,7 +57,7 @@ namespace GameServer
 						}
 						else
 						{
-							Pointer("/Paras/Result").Set(document, "succeed");
+							Pointer("/Paras/Result").Set(document, SUCCEED);
 							Pointer("/Paras/Info").Set(document, "您已登录 无需重复登录");
 							document.Accept(writer);
 							const char* output = buffer.GetString();
@@ -63,7 +66,7 @@ namespace GameServer
 						}
 					}
 					std::string token = GenerateGuid();
-					Pointer("/Paras/Result").Set(document, "succeed");
+					Pointer("/Paras/Result").Set(document, SUCCEED);
 					Pointer("/Paras/Info").Set(document, "登录成功");
 					Pointer("/Paras/UserInfo/Id").Set(document, id.c_str());
 					Pointer("/Paras/UserInfo/UserName").Set(document, username.c_str());
@@ -96,23 +99,23 @@ namespace GameServer
 					{
 						Row vehicleRow = vehicleResult.fetchOne();
 						char path[256];
-						sprintf_s(path, "/Paras/UserInfo/VehicleList/%d/Id", i);
+						sprintf_s(path, "/Paras/UserInfo/VehicleList/%zd/Id", i);
 						Pointer(path).Set(document, to_string((int)vehicleRow[0]).c_str());
-						sprintf_s(path, "/Paras/UserInfo/VehicleList/%d/Name", i);
+						sprintf_s(path, "/Paras/UserInfo/VehicleList/%zd/Name", i);
 						Pointer(path).Set(document, MysqlxBytes2String(vehicleRow.getBytes(1)).c_str());	//中文字符串直接获取会抛异常
-						sprintf_s(path, "/Paras/UserInfo/VehicleList/%d/Type", i);
+						sprintf_s(path, "/Paras/UserInfo/VehicleList/%zd/Type", i);
 						Pointer(path).Set(document, ((std::string)vehicleRow[2]).c_str());
-						sprintf_s(path, "/Paras/UserInfo/VehicleList/%d/Attack", i);
+						sprintf_s(path, "/Paras/UserInfo/VehicleList/%zd/Attack", i);
 						Pointer(path).Set(document, to_string((float)vehicleRow[3]).c_str());
-						sprintf_s(path, "/Paras/UserInfo/VehicleList/%d/Motility", i);
+						sprintf_s(path, "/Paras/UserInfo/VehicleList/%zd/Motility", i);
 						Pointer(path).Set(document, to_string((float)vehicleRow[4]).c_str());
-						sprintf_s(path, "/Paras/UserInfo/VehicleList/%d/Defend", i);
+						sprintf_s(path, "/Paras/UserInfo/VehicleList/%zd/Defend", i);
 						Pointer(path).Set(document, to_string((float)vehicleRow[5]).c_str());
-						sprintf_s(path, "/Paras/UserInfo/VehicleList/%d/Health", i);
+						sprintf_s(path, "/Paras/UserInfo/VehicleList/%zd/MaxHealth", i);
 						Pointer(path).Set(document, to_string((float)vehicleRow[6]).c_str());
-						sprintf_s(path, "/Paras/UserInfo/VehicleList/%d/Price", i);
+						sprintf_s(path, "/Paras/UserInfo/VehicleList/%zd/Price", i);
 						Pointer(path).Set(document, to_string((float)vehicleRow[7]).c_str());
-						sprintf_s(path, "/Paras/UserInfo/VehicleList/%d/Intro", i);
+						sprintf_s(path, "/Paras/UserInfo/VehicleList/%zd/Intro", i);
 						Pointer(path).Set(document, MysqlxBytes2String(vehicleRow.getBytes(8)).c_str());
 					}
 					PlayerManager::GetInstance()->AddPlayer(id, username, token, level, curVehicleId, connSocket, sendMessage);
@@ -125,7 +128,7 @@ namespace GameServer
 				}
 				else
 				{
-					Pointer("/Paras/Result").Set(document, "failure");
+					Pointer("/Paras/Result").Set(document, FAILURE);
 					Pointer("/Paras/Info").Set(document, "密码错误");
 					document.Accept(writer);
 					const char* output = buffer.GetString();
@@ -134,14 +137,14 @@ namespace GameServer
 			}
 			else
 			{
-				Pointer("/Paras/Result").Set(document, "failure");
+				Pointer("/Paras/Result").Set(document, FAILURE);
 				Pointer("/Paras/Info").Set(document, "该用户不存在");
 				document.Accept(writer);
 				const char* output = buffer.GetString();
 				sendMessage(output);
 			}
 		}
-		void LoginHandle::Logout(std::string userId, unsigned __int64 connSocket, std::function<void(std::string)> sendMessage)
+		void AccountHandle::Logout(std::string userId, unsigned __int64 connSocket, std::function<void(std::string)> sendMessage)
 		{
 			Document document;
 			Pointer("/Command").Set(document, "LogoutResult");
@@ -150,20 +153,20 @@ namespace GameServer
 			if (PlayerManager::GetInstance()->GetPlayer(userId) != nullptr)
 			{
 				PlayerManager::GetInstance()->RemovePlayer(userId);
-				Pointer("/Paras/Result").Set(document, "succeed");
+				Pointer("/Paras/Result").Set(document, SUCCEED);
 				Pointer("/Paras/Info").Set(document, "您已退出登录");
 			}
 			else
 			{
 				//该用户已下线
-				Pointer("/Paras/Result").Set(document, "failure");
+				Pointer("/Paras/Result").Set(document, FAILURE);
 				Pointer("/Paras/Info").Set(document, "该用户已下线");
 			}
 			document.Accept(writer);
 			const char* output = buffer.GetString();
 			sendMessage(output);
 		}
-		void LoginHandle::Register(std::string username, std::string password, unsigned __int64 connSocket, std::function<void(std::string)> sendMessage)
+		void AccountHandle::Register(std::string username, std::string password, unsigned __int64 connSocket, std::function<void(std::string)> sendMessage)
 		{
 			auto session = DBUtil::GetInstance()->GetSession();
 			auto accountTable = session.getDefaultSchema().getTable("account");
@@ -176,7 +179,7 @@ namespace GameServer
 			auto userRowResult = accountTable.select("username").where("username=:username").limit(1).bind("username", username).lockShared().execute();
 			if (userRowResult.count() > 0)
 			{
-				Pointer("/Paras/Result").Set(document, "failure");
+				Pointer("/Paras/Result").Set(document, FAILURE);
 				Pointer("/Paras/Info").Set(document, "该用户名已存在");
 				document.Accept(writer);
 				const char* output = buffer.GetString();
@@ -194,7 +197,7 @@ namespace GameServer
 				possessVehicle.insert("user_id", "vehicle_id").values(userId, 1).execute();	//默认拥有id为1的载具
 				session.commit();
 
-				Pointer("/Paras/Result").Set(document, "succeed");
+				Pointer("/Paras/Result").Set(document, SUCCEED);
 				Pointer("/Paras/Info").Set(document, "注册成功");
 				document.Accept(writer);
 				const char* output = buffer.GetString();
@@ -203,12 +206,15 @@ namespace GameServer
 			else
 			{
 				session.rollback();
-				Pointer("/Paras/Result").Set(document, "failure");
+				Pointer("/Paras/Result").Set(document, FAILURE);
 				Pointer("/Paras/Info").Set(document, "注册失败");
 				document.Accept(writer);
 				const char* output = buffer.GetString();
 				sendMessage(output);
 			}
+		}
+		void AccountHandle::ChangePassword(string userId, string oldPassword, string newPassword, unsigned __int64 connSocket, std::function<void(std::string)> sendMessage)
+		{
 		}
 	}
 }

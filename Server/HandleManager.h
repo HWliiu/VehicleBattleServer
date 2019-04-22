@@ -1,6 +1,6 @@
 #pragma once
 #include <mutex>
-#include "LoginHandle.h"
+#include "AccountHandle.h"
 #include "Singleton.h"
 
 namespace GameServer
@@ -12,19 +12,19 @@ namespace GameServer
 		{
 		public:
 			friend class Singleton<HandleManager>;
-			inline LoginHandle* GetLoginHandle() { return _pLoginHandle; }
+			inline AccountHandle* GetAccountHandle() { return _pAccountHandle; }
 		private:
 			HandleManager()
 			{
-				_pLoginHandle = new LoginHandle();
+				_pAccountHandle = new AccountHandle();
 			}
 			~HandleManager()
 			{
-				delete _pLoginHandle;
-				_pLoginHandle = nullptr;
+				delete _pAccountHandle;
+				_pAccountHandle = nullptr;
 			}
 
-			LoginHandle* _pLoginHandle;
+			AccountHandle* _pAccountHandle;
 		};
 	}
 }
