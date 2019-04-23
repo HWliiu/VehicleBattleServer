@@ -39,7 +39,7 @@ namespace GameServer
 				auto money = to_string((int)accountRow[4]);
 				auto level = to_string((int)accountRow[5]);
 				auto curVehicleId = to_string((int)accountRow[6]);
-				auto registerTime = accountRow[7].isNull() ? "" :((std::string)accountRow[7]);
+				auto registerTime = accountRow[7].isNull() ? "" : ((std::string)accountRow[7]);
 				auto lastLoginTime = accountRow[8].isNull() ? "" : ((std::string)accountRow[8]);
 				//验证密码
 				if (pwd == password)
@@ -215,6 +215,40 @@ namespace GameServer
 		}
 		void AccountHandle::ChangePassword(string userId, string oldPassword, string newPassword, unsigned __int64 connSocket, std::function<void(std::string)> sendMessage)
 		{
+			auto session = DBUtil::GetInstance()->GetSession();
+			auto accountTable = session.getDefaultSchema().getTable("account");
+
+			Document document;
+			Pointer("/Command").Set(document, "ChangePasswordResult");
+			StringBuffer buffer;
+			Writer<StringBuffer> writer(buffer);
+			//验证密码
+			auto accountRowResult = accountTable.select("password").where("user_id=:userId").limit(1).bind("userId", userId).execute();
+			if ((std::string)(accountRowResult.fetchOne().get(0)) == oldPassword)
+			{
+				auto result = accountTable.update().set("password", newPassword).where("user_id=:userId").limit(1).bind("userId", userId).execute();
+				if (result.getAffectedItemsCount() == 1)
+				{
+					Pointer("/Paras/Result").Set(document, SUCCEED);
+					Pointer("/Paras/Info").Set(document, "修改成功");
+					//退出登录
+					/*Logout(userId, connSocket, sendMessage);*/
+					PlayerManager::GetInstance()->RemovePlayer(userId);
+				}
+				else
+				{
+					Pointer("/Paras/Result").Set(document, FAILURE);
+					Pointer("/Paras/Info").Set(document, "修改失败");
+				}
+			}
+			else
+			{
+				Pointer("/Paras/Result").Set(document, FAILURE);
+				Pointer("/Paras/Info").Set(document, "原密码不正确");
+			}
+			document.Accept(writer);
+			const char* output = buffer.GetString();
+			sendMessage(output);
 		}
 	}
 }
