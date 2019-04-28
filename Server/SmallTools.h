@@ -5,7 +5,7 @@
 
 namespace GameServer
 {
-	namespace Util
+	namespace Common
 	{
 		//这个函数专门用来将utf-8编码的char*字符串转换成ANSI编码以便在控制台中显示(直接改控制台的编码方式也行)
 		inline std::string U2G(const char* utf8)

@@ -48,9 +48,6 @@
     <ClInclude Include="VehicleModel.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="EquipmentModel.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="PlayerManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -61,6 +58,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="AccountHandle.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="StoreHandle.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Consts.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -74,9 +77,6 @@
     <ClCompile Include="IOCPServer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DBUtil.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="CommandDispatcher.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -84,9 +84,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="VehicleModel.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="EquipmentModel.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="PlayerManager.cpp">
@@ -104,5 +101,11 @@
     <ClCompile Include="AccountHandle.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="StoreHandle.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>

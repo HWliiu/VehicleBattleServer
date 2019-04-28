@@ -3,6 +3,7 @@
 #include "include/rapidjson/pointer.h"
 #include "SmallTools.h"
 #include "PlayerManager.h"
+#include "Consts.h"
 
 namespace GameServer
 {
@@ -65,16 +66,27 @@ namespace GameServer
 				std::string command = commandValue->GetString();
 				EraseValueByPointer(document, "/Command");
 
+				//判断是否为登录注册命令(这两个命令参数不一样，单独分出来)
+				if (command == Common::RequestLogin)
+				{
+					_loginCommand.Execute(std::move(document), connSocket, sendMessage);
+					return;
+				}
+				if (command == Common::RequestRegister)
+				{
+					_registerCommand.Execute(std::move(document), sendMessage);
+					return;
+				}
+
 				auto iter = _commandMap.find(command);
 				if (iter != _commandMap.end())
 				{
-					_commandMap[iter->first]->Execute(std::move(document), connSocket, sendMessage);
+					_commandMap[iter->first]->Execute(std::move(document));
 				}
 				else
 				{
 					printf("command not found\n");
 				}
-
 			}
 			else
 			{
@@ -85,10 +97,11 @@ namespace GameServer
 		void CommandDispatcher::InitCommandMap()
 		{
 			//所有命令到这里注册(键要跟客户端定义的命令常量匹配)
-			_commandMap["RequestLogin"] = new LoginCommand();
-			_commandMap["RequestRegister"] = new RegisterCommand();
-			_commandMap["RequestLogout"] = new LogoutCommand();
-			_commandMap["RequestChangePassword"] = new ChangePasswordCommand();
+			_commandMap[Common::RequestLogout] = new LogoutCommand();
+			_commandMap[Common::RequestChangePassword] = new ChangePasswordCommand();
+			_commandMap[Common::RequestStoreItemList] = new StoreItemListCommand();
+			_commandMap[Common::RequestPurchaseItem] = new PurchaseCommand();
+			_commandMap[Common::RequestChangeVehicle] = new ChangeVehicleCommand();
 		}
 	}
 }

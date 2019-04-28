@@ -15,15 +15,15 @@ namespace GameServer
 			_port = 8080;
 			_postAcceptCount = 64;
 			_freeAcceptSockCount = 0;
-			_spFreeIoDataPool = std::make_shared<FreeIoDataPool>(512);
-			_spDispatchCmdThreadPool = std::make_shared<Util::ThreadPool>(4);
+			_upFreeIoDataPool = std::make_unique<FreeIoDataPool>(512);
+			_upDispatchCmdThreadPool = std::make_unique<Common::ThreadPool>(4);
 
 			//初始化socket
 			WORD versionRequest = MAKEWORD(2, 2);
 			WSADATA wsaData;
 			if (WSAStartup(versionRequest, &wsaData) != 0)	//返回值为0代表成功 
 			{
-				std::cout << Util::U2G("初始化socket失败！错误代码：") << WSAGetLastError() << std::endl;
+				std::cout << Common::U2G("初始化socket失败！错误代码：") << WSAGetLastError() << std::endl;
 				throw std::bad_exception();
 			}
 			//初始化地址
@@ -35,20 +35,20 @@ namespace GameServer
 			_listenSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 			if (_listenSocket == INVALID_SOCKET)
 			{
-				std::cout << Util::U2G("listenSocket创建失败！错误代码：") << WSAGetLastError() << std::endl;
+				std::cout << Common::U2G("listenSocket创建失败！错误代码：") << WSAGetLastError() << std::endl;
 				throw std::bad_exception();
 			}
 			//绑定监听socket
 			if (bind(_listenSocket, (sockaddr*)& addr, sizeof(addr)) == SOCKET_ERROR)
 			{
-				std::cout << Util::U2G("绑定listenSocket失败！错误代码：") << WSAGetLastError() << std::endl;
+				std::cout << Common::U2G("绑定listenSocket失败！错误代码：") << WSAGetLastError() << std::endl;
 				throw std::bad_exception();
 			}
 			//创建io完成端口
 			_completionPort = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0);
 			if (_completionPort == NULL)
 			{
-				std::cout << Util::U2G("创建completionPort失败！错误代码：") << GetLastError() << std::endl;
+				std::cout << Common::U2G("创建completionPort失败！错误代码：") << GetLastError() << std::endl;
 				throw std::bad_exception();
 			}
 			//将监听socket绑定到io完成端口
@@ -56,7 +56,7 @@ namespace GameServer
 			lpPerHandleData->socket = _listenSocket;
 			if (CreateIoCompletionPort((HANDLE)_listenSocket, _completionPort, (ULONG_PTR)lpPerHandleData, 0) == NULL)
 			{
-				std::cout << Util::U2G("listenSocket绑定到io完成端口失败！错误代码：") << GetLastError() << std::endl;
+				std::cout << Common::U2G("listenSocket绑定到io完成端口失败！错误代码：") << GetLastError() << std::endl;
 				throw std::bad_exception();
 			}
 			//获取AcceptEx函数指针
@@ -64,13 +64,13 @@ namespace GameServer
 			GUID guidAcceptEx = WSAID_ACCEPTEX;
 			if (WSAIoctl(_listenSocket, SIO_GET_EXTENSION_FUNCTION_POINTER, &guidAcceptEx, sizeof(guidAcceptEx), &_lpfnAcceptEx, sizeof(_lpfnAcceptEx), &dwBytesRecvd, NULL, NULL) != 0)	  //通过WSAIoctl获取AcceptEx函数指针时，只需要随便传递给WSAIoctl()一个有效的SOCKET即可，该Socket的类型不会影响获取的AcceptEx函数指针
 			{
-				std::cout << Util::U2G("获取AcceptEx函数指针失败！错误代码：") << WSAGetLastError() << std::endl;
+				std::cout << Common::U2G("获取AcceptEx函数指针失败！错误代码：") << WSAGetLastError() << std::endl;
 				throw std::bad_exception();
 			}
 			//创建自动投递事件
 			_postAcceptEvent = CreateEvent(NULL, false, true, NULL);//初始有信号自动复位事件
 			//初始化IoDataPool
-			_spFreeIoDataPool->FillPool(_spFreeIoDataPool->FillSize);
+			_upFreeIoDataPool->FillPool(_upFreeIoDataPool->FillSize);
 		}
 
 		IOCPServer::~IOCPServer()
@@ -83,7 +83,7 @@ namespace GameServer
 			//开启监听
 			if (listen(_listenSocket, SOMAXCONN) == SOCKET_ERROR)
 			{
-				std::cout << Util::U2G("listenSocket开启监听失败！错误代码：") << WSAGetLastError() << std::endl;
+				std::cout << Common::U2G("listenSocket开启监听失败！错误代码：") << WSAGetLastError() << std::endl;
 				throw std::bad_exception();
 			}
 			//创建工作线程
@@ -94,12 +94,12 @@ namespace GameServer
 				HANDLE thread = (HANDLE)_beginthreadex(NULL, 0, WorksThread, this, 0, NULL);
 				if (thread == NULL)
 				{
-					std::cout << Util::U2G("创建工作线程失败！错误代码：") << GetLastError() << std::endl;
+					std::cout << Common::U2G("创建工作线程失败！错误代码：") << GetLastError() << std::endl;
 					throw std::bad_exception();
 				}
 				CloseHandle(thread);
 			}
-			std::cout << Util::U2G("服务器已启动！等待客户端连接！") << std::endl;
+			std::cout << Common::U2G("服务器已启动！等待客户端连接！") << std::endl;
 			//动态投递acceptEx
 			while (true)
 			{
@@ -121,7 +121,7 @@ namespace GameServer
 		bool IOCPServer::PostAccept()
 		{
 			DWORD dwBytesRecvd = 0;
-			PerIoData* lpPerIoData = _spFreeIoDataPool->Pop();
+			PerIoData* lpPerIoData = _upFreeIoDataPool->Pop();
 			lpPerIoData->operatorType = OperatorType::ACCEPT;
 			lpPerIoData->acceptSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 			//投递acceptEx
@@ -129,10 +129,10 @@ namespace GameServer
 			{
 				if (WSAGetLastError() != ERROR_IO_PENDING)
 				{
-					std::cout << Util::U2G("投递acceptEx失败！错误代码：") << WSAGetLastError() << std::endl;
+					std::cout << Common::U2G("投递acceptEx失败！错误代码：") << WSAGetLastError() << std::endl;
 					//清理资源
 					closesocket(lpPerIoData->acceptSocket);
-					_spFreeIoDataPool->Push(lpPerIoData);
+					_upFreeIoDataPool->Push(lpPerIoData);
 					return false;
 				}
 			}
@@ -144,14 +144,14 @@ namespace GameServer
 		bool IOCPServer::PostRecv(SOCKET socket)
 		{
 			DWORD dwFlags = 0;
-			PerIoData* lpPerIoData = _spFreeIoDataPool->Pop();
+			PerIoData* lpPerIoData = _upFreeIoDataPool->Pop();
 			lpPerIoData->operatorType = OperatorType::RECV;         //将状态设置成接收
 			if (WSARecv(socket, &lpPerIoData->wsabuf, 1, NULL, &dwFlags, &lpPerIoData->overlapped, NULL) == SOCKET_ERROR)
 			{
 				if (GetLastError() != ERROR_IO_PENDING)
 				{
-					std::cout << Util::U2G("WSARecv失败！错误代码：") << WSAGetLastError() << std::endl;
-					_spFreeIoDataPool->Push(lpPerIoData);
+					std::cout << Common::U2G("WSARecv失败！错误代码：") << WSAGetLastError() << std::endl;
+					_upFreeIoDataPool->Push(lpPerIoData);
 					return false;
 				}
 			}
@@ -161,11 +161,11 @@ namespace GameServer
 		bool IOCPServer::PostSend(SOCKET socket, std::string msg)
 		{
 			DWORD dwFlags = 0;
-			PerIoData* lpPerIoData = _spFreeIoDataPool->Pop();
+			PerIoData* lpPerIoData = _upFreeIoDataPool->Pop();
 			lpPerIoData->operatorType = OperatorType::SEND;         //将状态设置成发送
 			int msgLen = msg.length();
 			///////////////////////////////////////////////////////////
-			std::cout << "send:" << Util::U2G(msg.c_str()) << std::endl;
+			std::cout << "send:" << Common::U2G(msg.c_str()) << std::endl;
 			memcpy_s(lpPerIoData->wsabuf.buf, _TRUNCATE, (byte*)& msgLen, 4);	//封装包头
 			strncpy_s(lpPerIoData->wsabuf.buf + 4, _TRUNCATE, msg.c_str(), msgLen);	//封装数据
 			lpPerIoData->wsabuf.len = msgLen + 4;
@@ -175,8 +175,8 @@ namespace GameServer
 			{
 				if (GetLastError() != ERROR_IO_PENDING)
 				{
-					std::cout << Util::U2G("WSASend失败！错误代码：") << WSAGetLastError() << std::endl;
-					_spFreeIoDataPool->Push(lpPerIoData);
+					std::cout << Common::U2G("WSASend失败！错误代码：") << WSAGetLastError() << std::endl;
+					_upFreeIoDataPool->Push(lpPerIoData);
 					return false;
 				}
 			}
@@ -195,9 +195,9 @@ namespace GameServer
 			//When the AcceptEx function returns, the socket sAcceptSocket is in the default state for a connected socket. The socket sAcceptSocket does not inherit the properties of the socket associated with sListenSocket parameter until SO_UPDATE_ACCEPT_CONTEXT is set on the socket.
 			if (setsockopt(lpPerIoData->acceptSocket, SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, (char*) & (lpListenSockHandleData->socket), sizeof(lpListenSockHandleData->socket)) == SOCKET_ERROR)
 			{
-				std::cout << Util::U2G("setsockopt失败！错误代码：") << GetLastError() << std::endl;
+				std::cout << Common::U2G("setsockopt失败！错误代码：") << GetLastError() << std::endl;
 				//清空lpPerIoData数据
-				_spFreeIoDataPool->Push(lpPerIoData);
+				_upFreeIoDataPool->Push(lpPerIoData);
 				return;
 			}
 			//创建acceptSocket的PerHandleData
@@ -209,48 +209,48 @@ namespace GameServer
 			int clientAddrLen = sizeof(SOCKADDR_IN);
 			if (getpeername(lpPerHandleData->socket, (SOCKADDR*)& lpPerHandleData->clientAddr, &clientAddrLen) == SOCKET_ERROR)
 			{
-				std::cout << Util::U2G("getpeername失败！错误代码：") << GetLastError() << std::endl;
+				std::cout << Common::U2G("getpeername失败！错误代码：") << GetLastError() << std::endl;
 				//清空lpPerIoData数据
-				_spFreeIoDataPool->Push(lpPerIoData);
+				_upFreeIoDataPool->Push(lpPerIoData);
 				return;
 			}
 			//线程互斥执行
 			{
 				std::lock_guard<std::mutex> lock(_threadMtx);	//RAII
-				std::cout << inet_ntoa(lpPerHandleData->clientAddr.sin_addr) << ":" << ntohs(lpPerHandleData->clientAddr.sin_port) << Util::U2G(" 成功连接!") << std::endl;	  //使用inet_ntoa要关闭SDL检查
+				std::cout << inet_ntoa(lpPerHandleData->clientAddr.sin_addr) << ":" << ntohs(lpPerHandleData->clientAddr.sin_port) << Common::U2G(" 成功连接!") << std::endl;	  //使用inet_ntoa要关闭SDL检查
 			}
 			//将acceptSocket与完成端口绑定
 			if (CreateIoCompletionPort((HANDLE)lpPerHandleData->socket, _completionPort, (ULONG_PTR)lpPerHandleData, 0) == NULL)
 			{
-				std::cout << Util::U2G("acceptSocket绑定到io完成端口失败！错误代码：") << GetLastError() << std::endl;
+				std::cout << Common::U2G("acceptSocket绑定到io完成端口失败！错误代码：") << GetLastError() << std::endl;
 				//清空lpPerIoData数据
-				_spFreeIoDataPool->Push(lpPerIoData);
+				_upFreeIoDataPool->Push(lpPerIoData);
 				return;
 			}
 			//清空lpPerIoData数据
-			_spFreeIoDataPool->Push(lpPerIoData);
+			_upFreeIoDataPool->Push(lpPerIoData);
 			//投递WASRecv
 			PostRecv(lpPerHandleData->socket);
 		}
 
 		void IOCPServer::ProcessRecv(PerHandleData* lpPerHandleData, PerIoData* lpPerIoData, DWORD dwBytesTransferred)
 		{
-			//std::cout << Util::U2G("接收了") << dwBytesTransferred << Util::U2G("字节") << std::endl;
+			//std::cout << Common::U2G("接收了") << dwBytesTransferred << Common::U2G("字节") << std::endl;
 			lpPerHandleData->recvMsgQueue.Enqueue(lpPerIoData->buffer, dwBytesTransferred);
 			//用线程池来分发消息,不阻塞消息接收
-			_spDispatchCmdThreadPool->Enqueue(&CommandDispatcher::StartDispatch, lpPerHandleData);
+			_upDispatchCmdThreadPool->Enqueue(&CommandDispatcher::StartDispatch, lpPerHandleData);
 
 			//清空lpPerIoData数据
-			_spFreeIoDataPool->Push(lpPerIoData);
+			_upFreeIoDataPool->Push(lpPerIoData);
 			//继续投递WSARecv
 			PostRecv(lpPerHandleData->socket);
 		}
 
 		void IOCPServer::ProcessSend(PerHandleData* lpPerHandleData, PerIoData* lpPerIoData, DWORD dwBytesTransferred)
 		{
-			//std::cout << Util::U2G("发送了") << dwBytesTransferred << Util::U2G("字节") << std::endl;
+			//std::cout << Common::U2G("发送了") << dwBytesTransferred << Common::U2G("字节") << std::endl;
 			//清空lpPerIoData数据
-			_spFreeIoDataPool->Push(lpPerIoData);
+			_upFreeIoDataPool->Push(lpPerIoData);
 
 		}
 
@@ -266,7 +266,7 @@ namespace GameServer
 			}
 			if (lpPerIoData != nullptr)
 			{
-				_spFreeIoDataPool->Push(lpPerIoData);
+				_upFreeIoDataPool->Push(lpPerIoData);
 			}
 		}
 
@@ -282,14 +282,14 @@ namespace GameServer
 				lpPerIoData = nullptr;
 				if (GetQueuedCompletionStatus(pThis->_completionPort, &dwBytesTransferred, (PULONG_PTR)& lpPerHandleData, (LPOVERLAPPED*)& lpPerIoData, INFINITE) == NULL)
 				{
-					std::cout << Util::U2G("GetQueuedCompletionStatus失败！错误代码：") << GetLastError() << std::endl;
+					std::cout << Common::U2G("GetQueuedCompletionStatus失败！错误代码：") << GetLastError() << std::endl;
 					pThis->ProcessDisconnect(lpPerHandleData, lpPerIoData);
 					continue;
 				}
 				//主动判断连接是否断开
 				if (dwBytesTransferred == 0 && (lpPerIoData->operatorType == OperatorType::RECV || lpPerIoData->operatorType == OperatorType::SEND))
 				{
-					std::cout << inet_ntoa(lpPerHandleData->clientAddr.sin_addr) << ":" << ntohs(lpPerHandleData->clientAddr.sin_port) << Util::U2G(" 断开连接!") << std::endl;
+					std::cout << inet_ntoa(lpPerHandleData->clientAddr.sin_addr) << ":" << ntohs(lpPerHandleData->clientAddr.sin_port) << Common::U2G(" 断开连接!") << std::endl;
 					pThis->ProcessDisconnect(lpPerHandleData, lpPerIoData);
 					continue;
 				}
@@ -377,7 +377,7 @@ namespace GameServer
 		{
 			if (_rear + size > _size)
 			{
-				std::cout << Util::U2G("BufferQueue大小不足!") << std::endl;
+				std::cout << Common::U2G("BufferQueue大小不足!") << std::endl;
 				throw std::out_of_range("");
 			}
 			std::lock_guard<std::mutex> lock(_recvBufQueueMtx);
@@ -413,7 +413,7 @@ namespace GameServer
 			}
 			else	//_rear小于0,出现错误
 			{
-				std::cout << Util::U2G("_rear小于0!") << std::endl;
+				std::cout << Common::U2G("_rear小于0!") << std::endl;
 				throw std::bad_exception();
 			}
 		}

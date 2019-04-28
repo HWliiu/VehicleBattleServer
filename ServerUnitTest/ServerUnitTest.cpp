@@ -4,7 +4,7 @@
 #include "../Server/LoginHandle.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-using namespace GameServer::Util;
+using namespace GameServer::Common;
 using namespace GameServer::Handle;
 
 namespace ServerUnitTest

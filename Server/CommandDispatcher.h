@@ -7,7 +7,7 @@
 namespace GameServer
 {
 	using namespace Command;
-	using namespace Util;
+	using namespace Common;
 	namespace Service
 	{
 		class CommandDispatcher :public Singleton<CommandDispatcher>
@@ -17,6 +17,8 @@ namespace GameServer
 			static void StartDispatch(PerHandleData* lpPerHandleData);
 			void NotifyDisconnect(unsigned __int64 connSocket);
 		private:
+			LoginCommand _loginCommand;
+			RegisterCommand _registerCommand;
 			std::unordered_map<std::string, ICommand*> _commandMap;
 
 			CommandDispatcher();

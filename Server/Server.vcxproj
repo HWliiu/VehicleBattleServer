@@ -152,9 +152,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Command.h" />
+    <ClInclude Include="Consts.h" />
     <ClInclude Include="CommandDispatcher.h" />
     <ClInclude Include="DBUtil.h" />
-    <ClInclude Include="EquipmentModel.h" />
     <ClInclude Include="HandleManager.h" />
     <ClInclude Include="IOCPServer.h" />
     <ClInclude Include="AccountHandle.h" />
@@ -165,14 +165,13 @@
     <ClInclude Include="RoomModel.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="SmallTools.h" />
+    <ClInclude Include="StoreHandle.h" />
     <ClInclude Include="ThreadPool.h" />
     <ClInclude Include="VehicleModel.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Command.cpp" />
     <ClCompile Include="CommandDispatcher.cpp" />
-    <ClCompile Include="DBUtil.cpp" />
-    <ClCompile Include="EquipmentModel.cpp" />
     <ClCompile Include="IOCPServer.cpp" />
     <ClCompile Include="AccountHandle.cpp" />
     <ClCompile Include="pch.cpp">
@@ -186,7 +185,11 @@
     <ClCompile Include="RoomManager.cpp" />
     <ClCompile Include="RoomModel.cpp" />
     <ClCompile Include="Server.cpp" />
+    <ClCompile Include="StoreHandle.cpp" />
     <ClCompile Include="VehicleModel.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

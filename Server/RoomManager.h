@@ -5,7 +5,7 @@
 
 namespace GameServer
 {
-	using namespace Util;
+	using namespace Common;
 	namespace Entity
 	{
 		class RoomManager :public Singleton<RoomManager>
@@ -18,7 +18,7 @@ namespace GameServer
 		private:
 			RoomManager();
 			~RoomManager();
-			std::unordered_map<std::string, RoomModel*> _roomMap;
+			std::unordered_map<std::string, RoomModel> _roomMap;
 		};
 	}
 }

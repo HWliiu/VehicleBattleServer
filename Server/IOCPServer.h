@@ -31,7 +31,7 @@ namespace GameServer
 			void Enqueue(char* buffer, int size);
 			std::string Dequeue();
 		private:
-			static const int _size = DATA_BUFSIZE * 50;
+			static const int _size = DATA_BUFSIZE * 10;
 			int _rear = 0;
 			char _data[_size];
 			std::mutex _recvBufQueueMtx;
@@ -86,8 +86,8 @@ namespace GameServer
 			int _postAcceptCount;
 			std::atomic_int _freeAcceptSockCount;
 			std::mutex _threadMtx;
-			std::shared_ptr<FreeIoDataPool> _spFreeIoDataPool;
-			std::shared_ptr<Util::ThreadPool> _spDispatchCmdThreadPool;
+			std::unique_ptr<FreeIoDataPool> _upFreeIoDataPool;
+			std::unique_ptr<Common::ThreadPool> _upDispatchCmdThreadPool;
 			HANDLE _postAcceptEvent;
 			LPFN_ACCEPTEX _lpfnAcceptEx;
 

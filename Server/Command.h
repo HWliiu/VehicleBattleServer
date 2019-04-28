@@ -8,36 +8,54 @@ namespace GameServer
 {
 	namespace Command
 	{
+		class LoginCommand
+		{
+		public:
+			virtual void Execute(Document document, unsigned __int64 connSocket, std::function<void(std::string)> sendMessage);
+		};
+
+		class RegisterCommand
+		{
+		public:
+			virtual void Execute(Document document, std::function<void(std::string)> sendMessage);
+		};
+
+
 		class ICommand
 		{
 		public:
-			virtual void Execute(Document document, unsigned __int64 connSocket, std::function<void(std::string)> sendMessage) = 0;
-		};
-
-		class LoginCommand :public ICommand
-		{
-		public:
-			virtual void Execute(Document document, unsigned __int64 connSocket, std::function<void(std::string)> sendMessage) override;
-		};
-
-		class RegisterCommand :public ICommand
-		{
-		public:
-			virtual void Execute(Document document, unsigned __int64 connSocket, std::function<void(std::string)> sendMessage) override;
+			virtual void Execute(Document document) = 0;
 		};
 
 		class LogoutCommand :public ICommand
 		{
 		public:
-			virtual void Execute(Document document, unsigned __int64 connSocket, std::function<void(std::string)> sendMessage) override;
+			virtual void Execute(Document document) override;
 		};
 
 		class ChangePasswordCommand :public ICommand
 		{
 		public:
-			virtual void Execute(Document document, unsigned __int64 connSocket, std::function<void(std::string)> sendMessage) override;
+			virtual void Execute(Document document) override;
 		};
 
+		class StoreItemListCommand :public ICommand
+		{
+		public:
+			virtual void Execute(Document document) override;
+		};
+
+		class PurchaseCommand :public ICommand
+		{
+		public:
+			virtual void Execute(Document document) override;
+		};
+
+		class ChangeVehicleCommand :public ICommand
+		{
+		public:
+			virtual void Execute(Document document) override;
+		};
 	}
 }
 

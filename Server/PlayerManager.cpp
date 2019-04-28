@@ -7,9 +7,9 @@ namespace GameServer
 {
 	namespace Entity
 	{
-		void PlayerManager::AddPlayer(std::string userId, std::string userName, std::string token, std::string level, std::string curVehicleId, unsigned __int64 connSocket, std::function<void(std::string)> sendMessage)
+		void PlayerManager::AddPlayer(std::string userId, std::string userName, std::string token, std::string experience, std::string money, std::string level, std::string curVehicleId, std::string registerTime, std::string lastLoginTime, vector<VehicleModel> vehicleList, unsigned __int64 connSocket, std::function<void(std::string)> sendMessage)
 		{
-			_onlinePlayerMap[userId] = new PlayerModel(userId, userName, token, level, curVehicleId, connSocket, sendMessage);
+			_onlinePlayerMap.emplace(std::piecewise_construct, std::make_tuple(userId), std::make_tuple(userId, userName, token, experience, money, level, curVehicleId, registerTime, lastLoginTime, vehicleList, connSocket, sendMessage));
 		}
 		void PlayerManager::RemovePlayer(std::string userId)
 		{
@@ -18,14 +18,11 @@ namespace GameServer
 			{
 				//通知房间删除玩家
 				auto roomId = GetPlayer(userId)->GetCurRoomId();
-				if (roomId != "0")
+				if (!roomId.empty())
 				{
 					RoomManager::GetInstance()->GetRoom(roomId)->RemovePlayer(GetPlayer(userId));
 				}
 
-				//closesocket(iter->second->ConnSocket);
-				delete iter->second;
-				iter->second = nullptr;
 				_onlinePlayerMap.erase(iter);
 			}
 		}
@@ -34,17 +31,17 @@ namespace GameServer
 			auto iter = _onlinePlayerMap.find(userId);
 			if (iter != _onlinePlayerMap.end())
 			{
-				return iter->second;
+				return &iter->second;
 			}
 			return nullptr;
 		}
 		PlayerModel* PlayerManager::GetPlayerBySocket(unsigned __int64 connSocket)	//客户端意外断开时只能通过套接字来找到用户
 		{
-			for (auto iter = _onlinePlayerMap.begin(); iter != _onlinePlayerMap.end(); iter++)
+			for (auto& pair : _onlinePlayerMap)
 			{
-				if (iter->second->ConnSocket == connSocket)
+				if (pair.second.ConnSocket == connSocket)
 				{
-					return iter->second;
+					return &pair.second;
 				}
 			}
 			return nullptr;
@@ -56,11 +53,6 @@ namespace GameServer
 
 		PlayerManager::~PlayerManager()
 		{
-			for (auto iter = _onlinePlayerMap.begin(); iter != _onlinePlayerMap.end(); iter++)
-			{
-				delete iter->second;
-				iter->second = nullptr;
-			}
 			_onlinePlayerMap.clear();
 		}
 	}

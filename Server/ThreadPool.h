@@ -11,7 +11,7 @@
 
 namespace GameServer
 {
-	namespace Util
+	namespace Common
 	{
 		class ThreadPool
 		{

@@ -3,7 +3,7 @@
 
 namespace GameServer
 {
-	namespace Util
+	namespace Common
 	{
 		//使用方法:子类继承Singleton<T>并将Singleton<T>设为友元类
 		template <class T>
