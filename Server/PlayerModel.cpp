@@ -37,13 +37,22 @@ namespace GameServer
 				_experience = to_string((int)accountRow[3]);
 				_money = to_string((int)accountRow[4]);
 				_level = to_string((int)accountRow[5]);
-				_curVehicleId = to_string((int)accountRow[6]);
+
+				auto vehicleId = to_string((int)accountRow[6]);
+				if (vehicleId != _curVehicleId)
+				{
+					_curVehicleId = vehicleId;
+					_maxHealth = stoi(GetCurVehicle()->MaxHealth);
+					_health = _maxHealth;
+				}
 			}
 		}
+
 		void PlayerModel::AddVehicle(std::string vehicleId, std::string vehicleName, std::string vehicleType, std::string attack, std::string motility, std::string defend, std::string maxHealth, std::string price, std::string intro)
 		{
 			_vehicleList.emplace_back(vehicleId, vehicleName, vehicleType, attack, motility, defend, maxHealth, price, intro);
 		}
+
 		VehicleModel* PlayerModel::GetCurVehicle()
 		{
 			for (auto& vehicle : _vehicleList)

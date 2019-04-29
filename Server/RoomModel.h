@@ -11,6 +11,7 @@ namespace GameServer
 		{
 		public:
 			const std::string RoomId;
+			const std::string RoomName;
 			PlayerModel* Owner;
 			vector<PlayerModel*> PlayerList;
 			bool CanStartGame;

@@ -1,5 +1,6 @@
 #pragma once
 #include <unordered_map>
+#include <vector>
 #include "Singleton.h"
 #include "RoomModel.h"
 
@@ -12,8 +13,14 @@ namespace GameServer
 		{
 		public:
 			friend class Singleton<RoomManager>;
-			void AddRoom();
+			void CreateRoom();
 			void RemoveRoom();
+			void JoinRoom();
+			void SearchRoom();
+			void ChangeRoom();
+			void ExitRoom();
+
+
 			RoomModel* GetRoom(std::string roomId);
 		private:
 			RoomManager();
