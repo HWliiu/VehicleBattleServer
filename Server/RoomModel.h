@@ -1,5 +1,5 @@
 #pragma once
-#include <vector>
+#include <list>
 #include <string>
 #include "PlayerModel.h"
 
@@ -13,14 +13,15 @@ namespace GameServer
 			const std::string RoomId;
 			const std::string RoomName;
 			PlayerModel* Owner;
-			vector<PlayerModel*> PlayerList;
-			bool CanStartGame;
+			std::string RoomMode;
+			std::string RoomMap;
 
-			RoomModel(std::string roomId, PlayerModel* owner);
+			list<PlayerModel*> PlayerList;
+
+			RoomModel(std::string roomId, std::string roomName, std::string roomMode, std::string roomMap, PlayerModel* owner);
 			~RoomModel();
 			bool AddPlayer(PlayerModel* player);
 			void RemovePlayer(PlayerModel* player);
-			void NotifyPlayer();
 		};
 	}
 }

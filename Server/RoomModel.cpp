@@ -5,11 +5,12 @@ namespace GameServer
 {
 	namespace Entity
 	{
-		RoomModel::RoomModel(std::string roomId, PlayerModel* owner) :RoomId(roomId)
+		RoomModel::RoomModel(std::string roomId, std::string roomName, std::string roomMode, std::string roomMap, PlayerModel* owner) :RoomId(roomId), RoomName(roomName)
 		{
+			RoomMode = roomMode;
+			RoomMap = roomMap;
 			Owner = owner;
-			PlayerList.push_back(Owner);
-			CanStartGame = false;
+			AddPlayer(Owner);
 		}
 
 		RoomModel::~RoomModel()
@@ -17,7 +18,7 @@ namespace GameServer
 		}
 		bool RoomModel::AddPlayer(PlayerModel* player)
 		{
-			if (PlayerList.size() < 10)
+			if (PlayerList.size() < 8)
 			{
 				PlayerList.push_back(player);
 				return true;
@@ -29,8 +30,15 @@ namespace GameServer
 		}
 		void RoomModel::RemovePlayer(PlayerModel* player)
 		{
-			if (player != Owner)
+			if (player == Owner)
 			{
+				PlayerList.remove(player);
+				Owner = PlayerList.front();
+			}
+			else
+			{
+				PlayerList.remove(player);
+				//通知其他玩家
 			}
 		}
 	}

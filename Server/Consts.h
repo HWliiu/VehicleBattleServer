@@ -11,6 +11,7 @@ namespace GameServer
 		const std::string RequestStoreItemList = "RequestStoreItemList";
 		const std::string RequestPurchaseItem = "RequestPurchaseItem";
 		const std::string RequestChangeVehicle = "RequestChangeVehicle";
+		const std::string RequestCreateRoom= "RequestCreateRoom";
 
 
 		const std::string LoginResult = "LoginResult";
@@ -20,6 +21,7 @@ namespace GameServer
 		const std::string PurchaseItemResult = "PurchaseItemResult";
 		const std::string ChangeVehicleResult = "ChangeVehicleResult";
 		const std::string StoreItemListResult = "StoreItemListResult";
+		const std::string CreateRoomResult = "CreateRoomResult";
 
 
 		const std::string SUCCEED = "succeed";

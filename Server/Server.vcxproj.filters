@@ -66,6 +66,9 @@
     <ClInclude Include="Consts.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="LobbyHandle.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -102,6 +105,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="StoreHandle.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="LobbyHandle.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

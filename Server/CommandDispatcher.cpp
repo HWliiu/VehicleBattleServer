@@ -102,6 +102,7 @@ namespace GameServer
 			_commandMap[Common::RequestStoreItemList] = new StoreItemListCommand();
 			_commandMap[Common::RequestPurchaseItem] = new PurchaseCommand();
 			_commandMap[Common::RequestChangeVehicle] = new ChangeVehicleCommand();
+			_commandMap[Common::RequestCreateRoom] = new CreateRoomCommand();
 		}
 	}
 }

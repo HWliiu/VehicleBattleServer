@@ -76,5 +76,14 @@ namespace GameServer
 			auto pAccountHandle = HandleManager::GetInstance()->GetAccountHandle();
 			pAccountHandle->ChangeVehicle(userId, vehicleId, player);
 		}
+		void CreateRoomCommand::Execute(Document document)
+		{
+			VERIFY_ACCOUNT;
+
+			auto roomName = Pointer("/Paras/roomName").Get(document)->GetString();
+			auto roomMode = Pointer("/Paras/roomMode").Get(document)->GetString();
+			auto roomMap = Pointer("/Paras/roomMap").Get(document)->GetString();
+			//auto pAccountHandle = HandleManager::GetInstance()->GetAccountHandle();
+		}
 	}
 }

@@ -9,6 +9,13 @@ namespace GameServer
 	using namespace std;
 	namespace Entity
 	{
+		enum class Team
+		{
+			None,
+			Red,
+			Blue
+		};
+
 		class PlayerModel
 		{
 		private:
@@ -25,6 +32,7 @@ namespace GameServer
 			vector<VehicleModel> _vehicleList;
 
 			std::string _curRoomID;
+			Team _team;
 			bool _prepareState;
 			int _maxHealth;
 			int _health;
@@ -41,8 +49,9 @@ namespace GameServer
 			inline std::string GetToken() { return _token; }
 			//get money
 			inline std::string GetLevel() { return _level; }
-			//get ...time
+			//get xxxtime
 			inline std::string GetCurRoomId() { return _curRoomID; }
+			inline Team GetTeam() { return _team; }
 			inline bool GetPrepareState() { return _prepareState; }
 			inline int GetHealth() { return _health; }
 
@@ -72,6 +81,7 @@ namespace GameServer
 
 
 			inline void SetCurRoomId(std::string roomId) { _curRoomID = roomId; }
+			inline void SetTeam(Team team) { _team = team; }
 			inline void SetPrepareState(bool state) { _prepareState = state; }
 
 			void UpdateFromAccountTable();
