@@ -46,6 +46,15 @@ namespace GameServer
 			}
 			return nullptr;
 		}
+		std::vector<RoomModel*> RoomManager::GetAllRoom()
+		{
+			vector<RoomModel*> roomList;
+			for (auto& item : _roomMap)
+			{
+				roomList.emplace_back(&item.second);
+			}
+			return std::move(roomList);
+		}
 		RoomManager::RoomManager()
 		{
 			vector<int> vec;

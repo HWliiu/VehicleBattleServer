@@ -38,7 +38,7 @@ namespace GameServer
 		}
 		void LogoutCommand::Execute(Document document)
 		{
-			VERIFY_ACCOUNT;	//(最后这个分号纠正ctrl+k,d)
+			VERIFY_ACCOUNT;	//(最后这个分号用来纠正格式化代码)
 
 			auto pAccountHandle = HandleManager::GetInstance()->GetAccountHandle();
 			pAccountHandle->Logout(userId, player);
@@ -80,10 +80,19 @@ namespace GameServer
 		{
 			VERIFY_ACCOUNT;
 
-			auto roomName = Pointer("/Paras/roomName").Get(document)->GetString();
-			auto roomMode = Pointer("/Paras/roomMode").Get(document)->GetString();
-			auto roomMap = Pointer("/Paras/roomMap").Get(document)->GetString();
-			//auto pAccountHandle = HandleManager::GetInstance()->GetAccountHandle();
+			auto roomName = Pointer("/Paras/RoomName").Get(document)->GetString();
+			auto roomMode = Pointer("/Paras/RoomMode").Get(document)->GetString();
+			auto roomMap = Pointer("/Paras/RoomMap").Get(document)->GetString();
+
+			auto pLobbyHandle = HandleManager::GetInstance()->GetLobbyHandle();
+			pLobbyHandle->CreateRoom(userId, roomName, roomMode, roomMap, player);
+		}
+		void RefreshRoomListCommand::Execute(Document document)
+		{
+			VERIFY_ACCOUNT;
+
+			auto pLobbyHandle = HandleManager::GetInstance()->GetLobbyHandle();
+			pLobbyHandle->RefreshRoomList(userId, player);
 		}
 	}
 }

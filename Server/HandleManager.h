@@ -2,6 +2,7 @@
 #include <mutex>
 #include "AccountHandle.h"
 #include "StoreHandle.h"
+#include "LobbyHandle.h"
 #include "Singleton.h"
 
 namespace GameServer
@@ -13,11 +14,13 @@ namespace GameServer
 		{
 		public:
 			friend class Singleton<HandleManager>;
-			inline AccountHandle* GetAccountHandle() { return &accountHandle; }
-			inline StoreHandle* GetStoreHandle() { return &storeHandle; }
+			inline AccountHandle* GetAccountHandle() { return &_accountHandle; }
+			inline StoreHandle* GetStoreHandle() { return &_storeHandle; }
+			inline LobbyHandle* GetLobbyHandle() { return &_lobbyHandle; }
 		private:
-			AccountHandle accountHandle;
-			StoreHandle storeHandle;
+			AccountHandle _accountHandle;
+			StoreHandle _storeHandle;
+			LobbyHandle _lobbyHandle;
 
 			HandleManager()
 			{

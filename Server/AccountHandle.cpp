@@ -57,9 +57,7 @@ namespace GameServer
 							{
 								Pointer("/Paras/Result").Set(document, Common::SUCCEED.c_str());
 								Pointer("/Paras/Info").Set(document, "您已登录 无需重复登录");
-								document.Accept(writer);
-								const char* output = buffer.GetString();
-								sendMessage(output);
+								SENDMESSAGE1;
 								return;
 							}
 						}
@@ -143,38 +141,23 @@ namespace GameServer
 						//更新登录时间
 						accountTable.update().set("last_login_time", GetCurTime()).where("username=:username").limit(1).bind("username", username).execute();
 
-						document.Accept(writer);
-						const char* output = buffer.GetString();
-						sendMessage(output);
+						SENDMESSAGE1;
 					}
 					else
 					{
 						Pointer("/Paras/Result").Set(document, Common::FAILURE.c_str());
 						Pointer("/Paras/Info").Set(document, "密码错误");
-						document.Accept(writer);
-						const char* output = buffer.GetString();
-						sendMessage(output);
+						SENDMESSAGE1;
 					}
 				}
 				else
 				{
 					Pointer("/Paras/Result").Set(document, Common::FAILURE.c_str());
 					Pointer("/Paras/Info").Set(document, "该用户不存在");
-					document.Accept(writer);
-					const char* output = buffer.GetString();
-					sendMessage(output);
+					SENDMESSAGE1;
 				}
 			}
-			catch (const std::exception & e)
-			{
-				printf("%s\n", e.what());
-				Pointer("/Paras/Result").Set(document, Common::FAILURE.c_str());
-				Pointer("/Paras/Info").Set(document, "发生错误");
-				document.Accept(writer);
-				const char* output = buffer.GetString();
-				sendMessage(output);
-			}
-
+			HANDLE_CATCH1
 		}
 
 		void AccountHandle::Register(std::string username, std::string password, std::function<void(std::string)> sendMessage)
@@ -192,9 +175,7 @@ namespace GameServer
 				{
 					Pointer("/Paras/Result").Set(document, Common::FAILURE.c_str());
 					Pointer("/Paras/Info").Set(document, "该用户名已存在");
-					document.Accept(writer);
-					const char* output = buffer.GetString();
-					sendMessage(output);
+					SENDMESSAGE1;
 					return;
 				}
 				//添加用户
@@ -210,29 +191,17 @@ namespace GameServer
 
 					Pointer("/Paras/Result").Set(document, Common::SUCCEED.c_str());
 					Pointer("/Paras/Info").Set(document, "注册成功");
-					document.Accept(writer);
-					const char* output = buffer.GetString();
-					sendMessage(output);
+					SENDMESSAGE1;
 				}
 				else
 				{
 					session.rollback();
 					Pointer("/Paras/Result").Set(document, Common::FAILURE.c_str());
 					Pointer("/Paras/Info").Set(document, "注册失败");
-					document.Accept(writer);
-					const char* output = buffer.GetString();
-					sendMessage(output);
+					SENDMESSAGE1;
 				}
 			}
-			catch (const std::exception & e)
-			{
-				printf("%s\n", e.what());
-				Pointer("/Paras/Result").Set(document, Common::FAILURE.c_str());
-				Pointer("/Paras/Info").Set(document, "发生错误");
-				document.Accept(writer);
-				const char* output = buffer.GetString();
-				sendMessage(output);
-			}
+			HANDLE_CATCH1
 		}
 
 		void AccountHandle::Logout(string userId, PlayerModel* player)
@@ -252,9 +221,7 @@ namespace GameServer
 				Pointer("/Paras/Result").Set(document, Common::FAILURE.c_str());
 				Pointer("/Paras/Info").Set(document, "该用户已下线");
 			}
-			document.Accept(writer);
-			const char* output = buffer.GetString();
-			sendMessage(output);
+			SENDMESSAGE1;
 		}
 
 		void AccountHandle::ChangePassword(string userId, string oldPassword, string newPassword, PlayerModel* player)
@@ -291,11 +258,9 @@ namespace GameServer
 					Pointer("/Paras/Result").Set(document, Common::FAILURE.c_str());
 					Pointer("/Paras/Info").Set(document, "原密码不正确");
 				}
-				document.Accept(writer);
-				const char* output = buffer.GetString();
-				sendMessage(output);
+				SENDMESSAGE1;
 			}
-			HANDLE_CATCH
+			HANDLE_CATCH2
 		}
 		void AccountHandle::PurchaseVehicle(string userId, string vehicleId, PlayerModel* player)
 		{
@@ -312,9 +277,7 @@ namespace GameServer
 				{
 					Pointer("/Paras/Result").Set(document, Common::FAILURE.c_str());
 					Pointer("/Paras/Info").Set(document, "您已拥有此物品");
-					document.Accept(writer);
-					const char* output = buffer.GetString();
-					player->SendMessageFn(output);
+					SENDMESSAGE2;
 					return;
 				}
 
@@ -370,11 +333,9 @@ namespace GameServer
 					Pointer("/Paras/Info").Set(document, "金币不足");
 				}
 
-				document.Accept(writer);
-				const char* output = buffer.GetString();
-				player->SendMessageFn(output);
+				SENDMESSAGE2;
 			}
-			HANDLE_CATCH
+			HANDLE_CATCH2
 		}
 		void AccountHandle::ChangeVehicle(string userId, string vehicleId, PlayerModel * player)
 		{
@@ -416,11 +377,9 @@ namespace GameServer
 					Pointer("/Paras/Result").Set(document, Common::FAILURE.c_str());
 					Pointer("/Paras/Info").Set(document, "更换失败");
 				}
-				document.Accept(writer);
-				const char* output = buffer.GetString();
-				player->SendMessageFn(output);
+				SENDMESSAGE2;
 			}
-			HANDLE_CATCH
+			HANDLE_CATCH2
 		}
 	}
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include <map>
 #include <deque>
+#include <vector>
 #include "Singleton.h"
 #include "RoomModel.h"
 
@@ -20,6 +21,7 @@ namespace GameServer
 			void ChangeRoom();
 			void ExitRoom();
 			RoomModel* GetRoom(std::string roomId);
+			std::vector<RoomModel*> GetAllRoom();
 		private:
 			RoomManager();
 			~RoomManager();

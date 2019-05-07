@@ -12,6 +12,7 @@ namespace GameServer
 		{
 		public:
 			void CreateRoom(string userId, string roomName, string roomMode, string roomMap, PlayerModel* player);
+			void RefreshRoomList(string userId, PlayerModel* player);
 		};
 	}
 }

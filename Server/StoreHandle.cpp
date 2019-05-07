@@ -53,11 +53,9 @@ namespace GameServer
 				}
 				Pointer("/Paras/Result").Set(document, Common::SUCCEED.c_str());
 				Pointer("/Paras/Info").Set(document, "");
-				document.Accept(writer);
-				const char* output = buffer.GetString();
-				player->SendMessageFn(output);
+				SENDMESSAGE2;
 			}
-			HANDLE_CATCH
+			HANDLE_CATCH2
 
 		}
 	}
