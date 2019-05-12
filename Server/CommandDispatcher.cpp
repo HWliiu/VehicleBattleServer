@@ -104,6 +104,8 @@ namespace GameServer
 			_commandMap[Common::RequestChangeVehicle] = new ChangeVehicleCommand();
 			_commandMap[Common::RequestCreateRoom] = new CreateRoomCommand();
 			_commandMap[Common::RequestRefreshRoomList] = new RefreshRoomListCommand();
+			_commandMap[Common::RequestJoinRoom] = new JoinRoomCommand();
+			_commandMap[Common::RequestSearchRoom] = new SearchRoomCommand();
 		}
 	}
 }

@@ -1,6 +1,5 @@
 #pragma once
 #include <iostream>
-#include <functional>
 #include "PlayerModel.h"
 
 namespace GameServer
@@ -13,6 +12,10 @@ namespace GameServer
 		public:
 			void CreateRoom(string userId, string roomName, string roomMode, string roomMap, PlayerModel* player);
 			void RefreshRoomList(string userId, PlayerModel* player);
+			void JoinRoom(string userId, string roomId, PlayerModel* player);
+			void SearchRoom(string userId, string roomId, PlayerModel* player);
+		private:
+			void NotifyOtherPlayers(string roomId, string playerId);
 		};
 	}
 }

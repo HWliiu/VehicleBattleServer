@@ -9,13 +9,6 @@ namespace GameServer
 	using namespace std;
 	namespace Entity
 	{
-		enum class Team
-		{
-			None,
-			Red,
-			Blue
-		};
-
 		class PlayerModel
 		{
 		private:
@@ -32,8 +25,9 @@ namespace GameServer
 			vector<VehicleModel> _vehicleList;
 
 			std::string _curRoomID;
-			Team _team;
+			//std::string _team;	//None,Red,Blue
 			bool _prepareState;
+
 			int _maxHealth;
 			int _health;
 			bool _isDie;
@@ -51,7 +45,7 @@ namespace GameServer
 			inline std::string GetLevel() { return _level; }
 			//get xxxtime
 			inline std::string GetCurRoomId() { return _curRoomID; }
-			inline Team GetTeam() { return _team; }
+			//inline std::string GetTeam() { return _team; }
 			inline bool GetPrepareState() { return _prepareState; }
 			inline int GetHealth() { return _health; }
 
@@ -81,11 +75,11 @@ namespace GameServer
 
 
 			inline void SetCurRoomId(std::string roomId) { _curRoomID = roomId; }
-			inline void SetTeam(Team team) { _team = team; }
+			//inline void SetTeam(std::string team) { _team = team; }
 			inline void SetPrepareState(bool state) { _prepareState = state; }
 
 			void UpdateFromAccountTable();
-			void AddVehicle(std::string vehicleId, std::string vehicleName, std::string vehicleType, std::string attack, std::string motility, std::string defend, std::string maxHealth, std::string price, std::string intro);
+			void AddVehicle(std::string vehicleId, std::string vehicleName, std::string vehicleType, float attack, float motility, float defend, float maxHealth, int price, std::string intro);
 			VehicleModel* GetCurVehicle();
 
 			//PlayerModel(const PlayerModel&) = delete;

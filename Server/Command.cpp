@@ -94,5 +94,23 @@ namespace GameServer
 			auto pLobbyHandle = HandleManager::GetInstance()->GetLobbyHandle();
 			pLobbyHandle->RefreshRoomList(userId, player);
 		}
+		void JoinRoomCommand::Execute(Document document)
+		{
+			VERIFY_ACCOUNT;
+
+			auto roomId = Pointer("/Paras/RoomId").Get(document)->GetString();
+
+			auto pLobbyHandle = HandleManager::GetInstance()->GetLobbyHandle();
+			pLobbyHandle->JoinRoom(userId, roomId, player);
+		}
+		void SearchRoomCommand::Execute(Document document)
+		{
+			VERIFY_ACCOUNT;
+
+			auto roomId = Pointer("/Paras/RoomId").Get(document)->GetString();
+
+			auto pLobbyHandle = HandleManager::GetInstance()->GetLobbyHandle();
+			pLobbyHandle->SearchRoom(userId, roomId, player);
+		}
 	}
 }

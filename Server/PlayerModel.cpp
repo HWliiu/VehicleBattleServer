@@ -17,7 +17,7 @@ namespace GameServer
 
 			_curRoomID = "";
 			_prepareState = false;
-			_maxHealth = stoi(GetCurVehicle()->MaxHealth);
+			_maxHealth = int(GetCurVehicle()->MaxHealth);
 			_health = _maxHealth;
 			_isDie = false;
 		}
@@ -42,13 +42,13 @@ namespace GameServer
 				if (vehicleId != _curVehicleId)
 				{
 					_curVehicleId = vehicleId;
-					_maxHealth = stoi(GetCurVehicle()->MaxHealth);
+					_maxHealth = int(GetCurVehicle()->MaxHealth);
 					_health = _maxHealth;
 				}
 			}
 		}
 
-		void PlayerModel::AddVehicle(std::string vehicleId, std::string vehicleName, std::string vehicleType, std::string attack, std::string motility, std::string defend, std::string maxHealth, std::string price, std::string intro)
+		void PlayerModel::AddVehicle(std::string vehicleId, std::string vehicleName, std::string vehicleType, float attack, float motility, float defend, float maxHealth, int price, std::string intro)
 		{
 			_vehicleList.emplace_back(vehicleId, vehicleName, vehicleType, attack, motility, defend, maxHealth, price, intro);
 		}

@@ -13,7 +13,6 @@ namespace GameServer
 		public:
 			virtual void Execute(Document document, unsigned __int64 connSocket, std::function<void(std::string)> sendMessage);
 		};
-
 		class RegisterCommand
 		{
 		public:
@@ -32,7 +31,6 @@ namespace GameServer
 		public:
 			virtual void Execute(Document document) override;
 		};
-
 		class ChangePasswordCommand :public ICommand
 		{
 		public:
@@ -44,7 +42,6 @@ namespace GameServer
 		public:
 			virtual void Execute(Document document) override;
 		};
-
 		class PurchaseCommand :public ICommand
 		{
 		public:
@@ -62,8 +59,17 @@ namespace GameServer
 		public:
 			virtual void Execute(Document document) override;
 		};
-
 		class RefreshRoomListCommand :public ICommand
+		{
+		public:
+			virtual void Execute(Document document) override;
+		};
+		class JoinRoomCommand :public ICommand
+		{
+		public:
+			virtual void Execute(Document document) override;
+		};
+		class SearchRoomCommand :public ICommand
 		{
 		public:
 			virtual void Execute(Document document) override;

@@ -11,13 +11,13 @@ namespace GameServer
 			std::string VehicleId;
 			std::string VehicleName;
 			std::string VehicleType;
-			std::string Attack;
-			std::string Motility;
-			std::string Defend;
-			std::string MaxHealth;
-			std::string Price;
+			float Attack;
+			float Motility;
+			float Defend;
+			float MaxHealth;
+			int Price;
 			std::string Intro;
-			VehicleModel(std::string vehicleId, std::string vehicleName, std::string vehicleType, std::string attack, std::string motility, std::string defend, std::string maxHealth, std::string price, std::string intro);
+			VehicleModel(std::string vehicleId, std::string vehicleName, std::string vehicleType, float attack, float motility, float defend, float maxHealth, int price, std::string intro);
 			~VehicleModel();
 		};
 	}

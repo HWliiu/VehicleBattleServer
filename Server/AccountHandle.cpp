@@ -111,24 +111,24 @@ namespace GameServer
 							Pointer(path).Set(document, vehicleType.c_str());
 
 							sprintf_s(path, "/Paras/UserInfo/VehicleList/%zd/Attack", i);
-							auto vehicleAttack = to_string((float)vehicleRow[3]);
-							Pointer(path).Set(document, vehicleAttack.c_str());
+							auto vehicleAttack = (float)vehicleRow[3];
+							Pointer(path).Set(document, vehicleAttack);
 
 							sprintf_s(path, "/Paras/UserInfo/VehicleList/%zd/Motility", i);
-							auto vehicleMotility = to_string((float)vehicleRow[4]);
-							Pointer(path).Set(document, vehicleMotility.c_str());
+							auto vehicleMotility = (float)vehicleRow[4];
+							Pointer(path).Set(document, vehicleMotility);
 
 							sprintf_s(path, "/Paras/UserInfo/VehicleList/%zd/Defend", i);
-							auto vehicleDefend = to_string((float)vehicleRow[5]);
-							Pointer(path).Set(document, vehicleDefend.c_str());
+							auto vehicleDefend = (float)vehicleRow[5];
+							Pointer(path).Set(document, vehicleDefend);
 
 							sprintf_s(path, "/Paras/UserInfo/VehicleList/%zd/MaxHealth", i);
-							auto vehicleMaxHealth = to_string((float)vehicleRow[6]);
-							Pointer(path).Set(document, vehicleMaxHealth.c_str());
+							auto vehicleMaxHealth = (float)vehicleRow[6];
+							Pointer(path).Set(document, vehicleMaxHealth);
 
 							sprintf_s(path, "/Paras/UserInfo/VehicleList/%zd/Price", i);
-							auto vehiclePrice = to_string((float)vehicleRow[7]);
-							Pointer(path).Set(document, vehiclePrice.c_str());
+							auto vehiclePrice = (int)(float)vehicleRow[7];
+							Pointer(path).Set(document, vehiclePrice);
 
 							sprintf_s(path, "/Paras/UserInfo/VehicleList/%zd/Intro", i);
 							auto vehicleIntro = MysqlxBytes2String(vehicleRow.getBytes(8));
@@ -303,16 +303,16 @@ namespace GameServer
 						Pointer("/Paras/VehicleInfo/Name").Set(document, vehicleName.c_str());
 						auto vehicleType = (std::string)vehicleRow[2];
 						Pointer("/Paras/VehicleInfo/Type").Set(document, vehicleType.c_str());
-						auto vehicleAttack = to_string((float)vehicleRow[3]);
-						Pointer("/Paras/VehicleInfo/Attack").Set(document, vehicleAttack.c_str());
-						auto vehicleMotility = to_string((float)vehicleRow[4]);
-						Pointer("/Paras/VehicleInfo/Motility").Set(document, vehicleMotility.c_str());
-						auto vehicleDefend = to_string((float)vehicleRow[5]);
-						Pointer("/Paras/VehicleInfo/Defend").Set(document, vehicleDefend.c_str());
-						auto vehicleMaxHealth = to_string((float)vehicleRow[6]);
-						Pointer("/Paras/VehicleInfo/MaxHealth").Set(document, vehicleMaxHealth.c_str());
-						auto vehiclePrice = to_string((float)vehicleRow[7]);
-						Pointer("/Paras/VehicleInfo/Price").Set(document, vehiclePrice.c_str());
+						auto vehicleAttack = (float)vehicleRow[3];
+						Pointer("/Paras/VehicleInfo/Attack").Set(document, vehicleAttack);
+						auto vehicleMotility = (float)vehicleRow[4];
+						Pointer("/Paras/VehicleInfo/Motility").Set(document, vehicleMotility);
+						auto vehicleDefend = (float)vehicleRow[5];
+						Pointer("/Paras/VehicleInfo/Defend").Set(document, vehicleDefend);
+						auto vehicleMaxHealth = (float)vehicleRow[6];
+						Pointer("/Paras/VehicleInfo/MaxHealth").Set(document, vehicleMaxHealth);
+						auto vehiclePrice = (int)(float)vehicleRow[7];
+						Pointer("/Paras/VehicleInfo/Price").Set(document, vehiclePrice);
 						auto vehicleIntro = MysqlxBytes2String(vehicleRow.getBytes(8));
 						Pointer("/Paras/VehicleInfo/Intro").Set(document, vehicleIntro.c_str());
 

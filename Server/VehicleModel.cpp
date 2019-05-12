@@ -5,7 +5,7 @@ namespace GameServer
 {
 	namespace Entity
 	{
-		VehicleModel::VehicleModel(std::string vehicleId, std::string vehicleName, std::string vehicleType, std::string attack, std::string motility, std::string defend, std::string maxHealth, std::string price, std::string intro)
+		VehicleModel::VehicleModel(std::string vehicleId, std::string vehicleName, std::string vehicleType, float attack, float motility, float defend, float maxHealth, int price, std::string intro)
 		{
 			VehicleId = vehicleId;
 			VehicleName = vehicleName;

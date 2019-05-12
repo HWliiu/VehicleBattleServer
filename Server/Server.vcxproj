@@ -162,6 +162,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="PlayerManager.h" />
     <ClInclude Include="PlayerModel.h" />
+    <ClInclude Include="RoomHandle.h" />
     <ClInclude Include="RoomManager.h" />
     <ClInclude Include="RoomModel.h" />
     <ClInclude Include="Singleton.h" />
@@ -184,6 +185,7 @@
     </ClCompile>
     <ClCompile Include="PlayerManager.cpp" />
     <ClCompile Include="PlayerModel.cpp" />
+    <ClCompile Include="RoomHandle.cpp" />
     <ClCompile Include="RoomManager.cpp" />
     <ClCompile Include="RoomModel.cpp" />
     <ClCompile Include="Server.cpp" />

@@ -7,23 +7,33 @@ namespace GameServer
 		const std::string RequestLogin = "RequestLogin";
 		const std::string RequestRegister = "RequestRegister";
 		const std::string RequestLogout = "RequestLogout";
+
 		const std::string RequestChangePassword = "RequestChangePassword";
 		const std::string RequestStoreItemList = "RequestStoreItemList";
 		const std::string RequestPurchaseItem = "RequestPurchaseItem";
 		const std::string RequestChangeVehicle = "RequestChangeVehicle";
+
 		const std::string RequestCreateRoom = "RequestCreateRoom";
+		const std::string RequestSearchRoom = "RequestSearchRoom";
+		const std::string RequestJoinRoom = "RequestJoinRoom";
 		const std::string RequestRefreshRoomList = "RequestRefreshRoomList";
 
 
 		const std::string LoginResult = "LoginResult";
 		const std::string RegisterResult = "RegisterResult";
 		const std::string LogoutResult = "LogoutResult";
+
 		const std::string ChangePasswordResult = "ChangePasswordResult";
 		const std::string PurchaseItemResult = "PurchaseItemResult";
 		const std::string ChangeVehicleResult = "ChangeVehicleResult";
 		const std::string StoreItemListResult = "StoreItemListResult";
+
 		const std::string CreateRoomResult = "CreateRoomResult";
+		const std::string SearchRoomResult = "SearchRoomResult";
+		const std::string JoinRoomResult = "JoinRoomResult";
 		const std::string RefreshRoomListResult = "RefreshRoomListResult";
+
+		const std::string NetPlayerJoinRoom = "NetPlayerJoinRoom";
 
 
 		const std::string SUCCEED = "succeed";
@@ -50,7 +60,7 @@ namespace GameServer
 		{\
 			printf("%s\n", e.what());\
 			Pointer("/Paras/Result").Set(document, Common::FAILURE.c_str());\
-			Pointer("/Paras/Info").Set(document, "发生错误");\
+			Pointer("/Paras/Info").Set(document, "服务器异常");\
 			document.Accept(writer);\
 			const char* output = buffer.GetString();\
 			sendMessage(output);\
@@ -60,7 +70,7 @@ namespace GameServer
 		{\
 			printf("%s\n", e.what());\
 			Pointer("/Paras/Result").Set(document, Common::FAILURE.c_str());\
-			Pointer("/Paras/Info").Set(document, "发生错误");\
+			Pointer("/Paras/Info").Set(document, "服务器异常");\
 			document.Accept(writer);\
 			const char* output = buffer.GetString();\
 			player->SendMessageFn(output);\
