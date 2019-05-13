@@ -16,13 +16,6 @@ namespace GameServer
 			auto iter = _onlinePlayerMap.find(userId);
 			if (iter != _onlinePlayerMap.end())
 			{
-				//通知房间删除玩家
-				auto roomId = GetPlayer(userId)->GetCurRoomId();
-				if (!roomId.empty())
-				{
-					RoomManager::GetInstance()->GetRoom(roomId)->RemovePlayer(GetPlayer(userId));
-				}
-
 				_onlinePlayerMap.erase(iter);
 			}
 		}

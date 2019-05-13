@@ -45,6 +45,15 @@ namespace GameServer
 			auto player = Entity::PlayerManager::GetInstance()->GetPlayerBySocket(connSocket);
 			if (player != nullptr)
 			{
+				//ÍË³ö·¿¼ä
+				if (!player->GetCurRoomId().empty)
+				{
+					Document document;
+					Pointer("Command").Set(document, Common::RequestExitRoom.c_str());
+					Pointer("/Paras/UserId").Set(document, player->GetUserId().c_str());
+					Pointer("/Paras/Token").Set(document, player->GetToken().c_str());
+					_commandMap[Common::RequestExitRoom]->Execute(std::move(document));
+				}
 				Entity::PlayerManager::GetInstance()->RemovePlayer(player->GetUserId());
 			}
 		}
@@ -106,6 +115,7 @@ namespace GameServer
 			_commandMap[Common::RequestRefreshRoomList] = new RefreshRoomListCommand();
 			_commandMap[Common::RequestJoinRoom] = new JoinRoomCommand();
 			_commandMap[Common::RequestSearchRoom] = new SearchRoomCommand();
+			_commandMap[Common::RequestExitRoom] = new ExitRoomCommand();
 		}
 	}
 }

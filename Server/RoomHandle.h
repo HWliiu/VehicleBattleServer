@@ -10,8 +10,7 @@ namespace GameServer
 		class RoomHandle
 		{
 		public:
-			//void JoinRoom(string userId, string roomId, PlayerModel* player);
-			void ExitRoom(string userId, string roomId, PlayerModel* player);
+			void ExitRoom(string userId, PlayerModel* player);
 			void KickPlayer(string userId, string roomId, string playerId, PlayerModel* player);
 			void SendMsg(string userId, string roomId, PlayerModel* player);
 			void StartGame(string userId, string roomId, PlayerModel* player);
@@ -19,4 +18,3 @@ namespace GameServer
 		};
 	}
 }
-

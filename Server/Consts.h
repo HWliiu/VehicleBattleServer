@@ -4,6 +4,7 @@ namespace GameServer
 {
 	namespace Common
 	{
+		//Request
 		const std::string RequestLogin = "RequestLogin";
 		const std::string RequestRegister = "RequestRegister";
 		const std::string RequestLogout = "RequestLogout";
@@ -18,7 +19,14 @@ namespace GameServer
 		const std::string RequestJoinRoom = "RequestJoinRoom";
 		const std::string RequestRefreshRoomList = "RequestRefreshRoomList";
 
+		const std::string RequestExitRoom = "RequestExitRoom";
+		const std::string RequestChangePrepareState = "RequestChangePrepareState";
+		const std::string RequestStartGame = "RequestStartGame";
+		const std::string RequestKickPlayer = "RequestKickPlayer";
+		const std::string RequestSendMessage = "RequestSendMessage";
 
+
+		//Result
 		const std::string LoginResult = "LoginResult";
 		const std::string RegisterResult = "RegisterResult";
 		const std::string LogoutResult = "LogoutResult";
@@ -34,47 +42,37 @@ namespace GameServer
 		const std::string RefreshRoomListResult = "RefreshRoomListResult";
 
 		const std::string NetPlayerJoinRoom = "NetPlayerJoinRoom";
+		const std::string ExitRoomResult = "ExitRoomResult";
+		const std::string ChangePrepareStateResult = "ChangePrepareStateResult";
+		const std::string StartGameResult = "StartGameResult";
+		const std::string KickPlayerResult = "KickPlayerResult";
+		const std::string SendMessageResult = "SendMessageResult";
 
 
 		const std::string SUCCEED = "succeed";
 		const std::string FAILURE = "failure";
 
-#define PRE_HANDLE(command) \
+#define CONSTRUCT_DOCUMENT(command) \
 		Document document;\
-		Pointer("/Command").Set(document, ##command);\
+		Pointer("/Command").Set(document, ##command);
+
+#define SERIALIZE_DOCUMENT \
 		StringBuffer buffer;\
-		Writer<StringBuffer> writer(buffer);
-
-#define SENDMESSAGE1\
+		Writer<StringBuffer> writer(buffer);\
 		document.Accept(writer);\
-		const char* output = buffer.GetString();\
-		sendMessage(output);
+		const char* output = buffer.GetString();
 
-#define SENDMESSAGE2\
-		document.Accept(writer);\
-		const char* output = buffer.GetString();\
-		player->SendMessageFn(output);
-
-#define HANDLE_CATCH1 \
+#define HANDLE_CATCH(sendMessage) \
 		catch (const std::exception & e)\
 		{\
 			printf("%s\n", e.what());\
 			Pointer("/Paras/Result").Set(document, Common::FAILURE.c_str());\
 			Pointer("/Paras/Info").Set(document, "服务器异常");\
+			StringBuffer buffer;\
+			Writer<StringBuffer> writer(buffer);\
 			document.Accept(writer);\
 			const char* output = buffer.GetString();\
-			sendMessage(output);\
+			##sendMessage(output);\
 		}
-#define HANDLE_CATCH2 \
-		catch (const std::exception & e)\
-		{\
-			printf("%s\n", e.what());\
-			Pointer("/Paras/Result").Set(document, Common::FAILURE.c_str());\
-			Pointer("/Paras/Info").Set(document, "服务器异常");\
-			document.Accept(writer);\
-			const char* output = buffer.GetString();\
-			player->SendMessageFn(output);\
-		}
-
 	}
 }

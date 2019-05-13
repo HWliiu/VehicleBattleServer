@@ -18,7 +18,7 @@ namespace GameServer
 	{
 		void StoreHandle::ListStoreItem(std::string userId, PlayerModel* player)
 		{
-			PRE_HANDLE(Common::StoreItemListResult.c_str());
+			CONSTRUCT_DOCUMENT(Common::StoreItemListResult.c_str());
 
 			try
 			{
@@ -53,9 +53,10 @@ namespace GameServer
 				}
 				Pointer("/Paras/Result").Set(document, Common::SUCCEED.c_str());
 				Pointer("/Paras/Info").Set(document, "");
-				SENDMESSAGE2;
+				SERIALIZE_DOCUMENT;
+				player->SendMessageFn(output);
 			}
-			HANDLE_CATCH2
+			HANDLE_CATCH(player->SendMessageFn);
 
 		}
 	}

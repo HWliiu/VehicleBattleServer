@@ -53,6 +53,7 @@ namespace GameServer
 			auto pAccountHandle = HandleManager::GetInstance()->GetAccountHandle();
 			pAccountHandle->ChangePassword(userId, oldPassword, newPassword, player);
 		}
+
 		void StoreItemListCommand::Execute(Document document)
 		{
 			VERIFY_ACCOUNT;
@@ -68,6 +69,7 @@ namespace GameServer
 			auto pAccountHandle = HandleManager::GetInstance()->GetAccountHandle();
 			pAccountHandle->PurchaseVehicle(userId, vehicleId, player);
 		}
+
 		void ChangeVehicleCommand::Execute(Document document)
 		{
 			VERIFY_ACCOUNT;
@@ -76,6 +78,7 @@ namespace GameServer
 			auto pAccountHandle = HandleManager::GetInstance()->GetAccountHandle();
 			pAccountHandle->ChangeVehicle(userId, vehicleId, player);
 		}
+
 		void CreateRoomCommand::Execute(Document document)
 		{
 			VERIFY_ACCOUNT;
@@ -111,6 +114,14 @@ namespace GameServer
 
 			auto pLobbyHandle = HandleManager::GetInstance()->GetLobbyHandle();
 			pLobbyHandle->SearchRoom(userId, roomId, player);
+		}
+
+		void ExitRoomCommand::Execute(Document document)
+		{
+			VERIFY_ACCOUNT;
+
+			auto pRoomHandle = HandleManager::GetInstance()->GetRoomHandle();
+			pRoomHandle->ExitRoom(userId, player);
 		}
 	}
 }

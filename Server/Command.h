@@ -74,6 +74,11 @@ namespace GameServer
 		public:
 			virtual void Execute(Document document) override;
 		};
+		class ExitRoomCommand :public ICommand
+		{
+		public:
+			virtual void Execute(Document document) override;
+		};
 	}
 }
 

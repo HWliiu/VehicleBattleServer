@@ -17,7 +17,7 @@ namespace GameServer
 	{
 		void AccountHandle::Login(std::string username, std::string password, unsigned __int64 connSocket, std::function<void(std::string)> sendMessage)
 		{
-			PRE_HANDLE(Common::LoginResult.c_str());
+			CONSTRUCT_DOCUMENT(Common::LoginResult.c_str());
 
 			try
 			{
@@ -57,7 +57,8 @@ namespace GameServer
 							{
 								Pointer("/Paras/Result").Set(document, Common::SUCCEED.c_str());
 								Pointer("/Paras/Info").Set(document, "您已登录 无需重复登录");
-								SENDMESSAGE1;
+								SERIALIZE_DOCUMENT;
+								sendMessage(output);
 								return;
 							}
 						}
@@ -141,28 +142,31 @@ namespace GameServer
 						//更新登录时间
 						accountTable.update().set("last_login_time", GetCurTime()).where("username=:username").limit(1).bind("username", username).execute();
 
-						SENDMESSAGE1;
+						SERIALIZE_DOCUMENT;
+						sendMessage(output);
 					}
 					else
 					{
 						Pointer("/Paras/Result").Set(document, Common::FAILURE.c_str());
 						Pointer("/Paras/Info").Set(document, "密码错误");
-						SENDMESSAGE1;
+						SERIALIZE_DOCUMENT;
+						sendMessage(output);
 					}
 				}
 				else
 				{
 					Pointer("/Paras/Result").Set(document, Common::FAILURE.c_str());
 					Pointer("/Paras/Info").Set(document, "该用户不存在");
-					SENDMESSAGE1;
+					SERIALIZE_DOCUMENT;
+					sendMessage(output);
 				}
 			}
-			HANDLE_CATCH1
+			HANDLE_CATCH(sendMessage);
 		}
 
 		void AccountHandle::Register(std::string username, std::string password, std::function<void(std::string)> sendMessage)
 		{
-			PRE_HANDLE(Common::RegisterResult.c_str());
+			CONSTRUCT_DOCUMENT(Common::RegisterResult.c_str());
 
 			try
 			{
@@ -175,7 +179,8 @@ namespace GameServer
 				{
 					Pointer("/Paras/Result").Set(document, Common::FAILURE.c_str());
 					Pointer("/Paras/Info").Set(document, "该用户名已存在");
-					SENDMESSAGE1;
+					SERIALIZE_DOCUMENT;
+					sendMessage(output);
 					return;
 				}
 				//添加用户
@@ -191,22 +196,24 @@ namespace GameServer
 
 					Pointer("/Paras/Result").Set(document, Common::SUCCEED.c_str());
 					Pointer("/Paras/Info").Set(document, "注册成功");
-					SENDMESSAGE1;
+					SERIALIZE_DOCUMENT;
+					sendMessage(output);
 				}
 				else
 				{
 					session.rollback();
 					Pointer("/Paras/Result").Set(document, Common::FAILURE.c_str());
 					Pointer("/Paras/Info").Set(document, "注册失败");
-					SENDMESSAGE1;
+					SERIALIZE_DOCUMENT;
+					sendMessage(output);
 				}
 			}
-			HANDLE_CATCH1
+			HANDLE_CATCH(sendMessage);
 		}
 
 		void AccountHandle::Logout(string userId, PlayerModel* player)
 		{
-			PRE_HANDLE(Common::LogoutResult.c_str());
+			CONSTRUCT_DOCUMENT(Common::LogoutResult.c_str());
 
 			auto sendMessage = player->SendMessageFn;
 			if (PlayerManager::GetInstance()->GetPlayer(userId) != nullptr)
@@ -221,12 +228,13 @@ namespace GameServer
 				Pointer("/Paras/Result").Set(document, Common::FAILURE.c_str());
 				Pointer("/Paras/Info").Set(document, "该用户已下线");
 			}
-			SENDMESSAGE1;
+			SERIALIZE_DOCUMENT;
+			player->SendMessageFn(output);
 		}
 
 		void AccountHandle::ChangePassword(string userId, string oldPassword, string newPassword, PlayerModel* player)
 		{
-			PRE_HANDLE(Common::ChangePasswordResult.c_str());
+			CONSTRUCT_DOCUMENT(Common::ChangePasswordResult.c_str());
 
 			try
 			{
@@ -258,13 +266,14 @@ namespace GameServer
 					Pointer("/Paras/Result").Set(document, Common::FAILURE.c_str());
 					Pointer("/Paras/Info").Set(document, "原密码不正确");
 				}
-				SENDMESSAGE1;
+				SERIALIZE_DOCUMENT;
+				player->SendMessageFn(output);
 			}
-			HANDLE_CATCH2
+			HANDLE_CATCH(player->SendMessageFn);
 		}
 		void AccountHandle::PurchaseVehicle(string userId, string vehicleId, PlayerModel* player)
 		{
-			PRE_HANDLE(Common::PurchaseItemResult.c_str());
+			CONSTRUCT_DOCUMENT(Common::PurchaseItemResult.c_str());
 
 			try
 			{
@@ -277,7 +286,8 @@ namespace GameServer
 				{
 					Pointer("/Paras/Result").Set(document, Common::FAILURE.c_str());
 					Pointer("/Paras/Info").Set(document, "您已拥有此物品");
-					SENDMESSAGE2;
+					SERIALIZE_DOCUMENT;
+					player->SendMessageFn(output);
 					return;
 				}
 
@@ -333,13 +343,14 @@ namespace GameServer
 					Pointer("/Paras/Info").Set(document, "金币不足");
 				}
 
-				SENDMESSAGE2;
+				SERIALIZE_DOCUMENT;
+				player->SendMessageFn(output);
 			}
-			HANDLE_CATCH2
+			HANDLE_CATCH(player->SendMessageFn);
 		}
 		void AccountHandle::ChangeVehicle(string userId, string vehicleId, PlayerModel * player)
 		{
-			PRE_HANDLE(Common::ChangeVehicleResult.c_str());
+			CONSTRUCT_DOCUMENT(Common::ChangeVehicleResult.c_str());
 
 			try
 			{
@@ -377,9 +388,10 @@ namespace GameServer
 					Pointer("/Paras/Result").Set(document, Common::FAILURE.c_str());
 					Pointer("/Paras/Info").Set(document, "更换失败");
 				}
-				SENDMESSAGE2;
+				SERIALIZE_DOCUMENT;
+				player->SendMessageFn(output);
 			}
-			HANDLE_CATCH2
+			HANDLE_CATCH(player->SendMessageFn);
 		}
 	}
 }

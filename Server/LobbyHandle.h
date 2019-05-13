@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include "PlayerModel.h"
+#include "RoomModel.h"
 
 namespace GameServer
 {
@@ -15,7 +16,7 @@ namespace GameServer
 			void JoinRoom(string userId, string roomId, PlayerModel* player);
 			void SearchRoom(string userId, string roomId, PlayerModel* player);
 		private:
-			void NotifyOtherPlayers(string roomId, string playerId);
+			void NotifyOtherPlayersJoin(RoomModel* room, PlayerModel* joinPlayer);
 		};
 	}
 }

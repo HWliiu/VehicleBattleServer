@@ -52,25 +52,9 @@ namespace GameServer
 		}
 		void RoomModel::RemovePlayer(PlayerModel* player)
 		{
-			if (player == Owner)
-			{
-				if (PlayerList.size() > 1)	//还有其他玩家，转让房主
-				{
-					PlayerList.remove(player);
-					Owner = PlayerList.front();
-					//通知其他玩家
-				}
-				else	//没有其他玩家，删除房间
-				{
-					PlayerList.remove(player);
-					RoomManager::GetInstance()->RemoveRoom(RoomId);
-				}
-			}
-			else
-			{
-				PlayerList.remove(player);
-				//通知其他玩家
-			}
+			player->SetCurRoomId("");
+			player->SetPrepareState(false);
+			PlayerList.remove(player);
 		}
 	}
 }
