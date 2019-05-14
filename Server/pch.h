@@ -14,4 +14,6 @@
 #pragma execution_character_set("utf-8")	//指示char的执行字符集是UTF-8编码
 #endif	//ps:统一使用utf-8编码
 
+//#define OUTPUTMESSAGE
+
 #endif //PCH_H

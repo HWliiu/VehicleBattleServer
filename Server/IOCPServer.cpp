@@ -4,6 +4,7 @@
 #include "SmallTools.h"
 
 #pragma comment(lib,"ws2_32.lib")
+#define OUTPUTMESSAGE
 
 namespace GameServer
 {
@@ -164,8 +165,9 @@ namespace GameServer
 			PerIoData* lpPerIoData = _upFreeIoDataPool->Pop();
 			lpPerIoData->operatorType = OperatorType::SEND;         //将状态设置成发送
 			int msgLen = msg.length();
-			///////////////////////////////////////////////////////////
-			std::cout << "send:" << Common::U2G(msg.c_str()) << std::endl;
+#ifdef OUTPUTMESSAGE
+			std::cout << "send to " << socket << ":" << Common::U2G(msg.c_str()) << std::endl;
+#endif // OUTPUTMESSAGE
 			memcpy_s(lpPerIoData->wsabuf.buf, _TRUNCATE, (byte*)& msgLen, 4);	//封装包头
 			strncpy_s(lpPerIoData->wsabuf.buf + 4, _TRUNCATE, msg.c_str(), msgLen);	//封装数据
 			lpPerIoData->wsabuf.len = msgLen + 4;

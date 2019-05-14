@@ -5,6 +5,8 @@
 #include "PlayerManager.h"
 #include "Consts.h"
 
+#define OUTPUTMESSAGE
+
 namespace GameServer
 {
 	namespace Service
@@ -34,8 +36,9 @@ namespace GameServer
 				}
 				else
 				{
-					/////////////////////////////////////////////////////////
-					std::cout << "recv:" << U2G(message.c_str()) << std::endl;
+#ifdef OUTPUTMESSAGE
+					std::cout << "recv from " << lpPerHandleData->socket << ":" << U2G(message.c_str()) << std::endl;
+#endif // OUTPUTMESSAGE
 					GetInstance()->DispatchCommand(message, lpPerHandleData->socket, lpPerHandleData->sendMessageFn);
 				}
 			}
@@ -46,12 +49,13 @@ namespace GameServer
 			if (player != nullptr)
 			{
 				//ÍË³ö·¿¼ä
-				if (!player->GetCurRoomId().empty)
+				if (!player->GetCurRoomId().empty())
 				{
 					Document document;
-					Pointer("Command").Set(document, Common::RequestExitRoom.c_str());
+					Pointer("/Command").Set(document, Common::RequestExitRoom.c_str());
 					Pointer("/Paras/UserId").Set(document, player->GetUserId().c_str());
 					Pointer("/Paras/Token").Set(document, player->GetToken().c_str());
+					player->SendMessageFn = nullptr;
 					_commandMap[Common::RequestExitRoom]->Execute(std::move(document));
 				}
 				Entity::PlayerManager::GetInstance()->RemovePlayer(player->GetUserId());

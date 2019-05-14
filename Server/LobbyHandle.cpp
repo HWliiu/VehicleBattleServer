@@ -45,39 +45,6 @@ namespace GameServer
 					Pointer("/Paras/RoomInfo/RoomMode").Set(document, room->RoomMode.c_str());
 					Pointer("/Paras/RoomInfo/RoomMap").Set(document, room->RoomMap.c_str());
 					Pointer("/Paras/RoomInfo/PlayerNum").Set(document, room->PlayerList.size());
-
-					char path[256];
-					int i = 0;
-					for (auto& player : room->PlayerList)
-					{
-						sprintf_s(path, "/Paras/RoomInfo/PlayerList/%d/PlayerId", i);
-						Pointer(path).Set(document, player->GetUserId().c_str());
-						sprintf_s(path, "/Paras/RoomInfo/PlayerList/%d/PlayerName", i);
-						Pointer(path).Set(document, player->GetName().c_str());
-						sprintf_s(path, "/Paras/RoomInfo/PlayerList/%d/PlayerLevel", i);
-						Pointer(path).Set(document, player->GetLevel().c_str());
-						sprintf_s(path, "/Paras/RoomInfo/PlayerList/%d/PrepareState", i);
-						Pointer(path).Set(document, player->GetPrepareState());
-						/*sprintf_s(path, "/Paras/RoomInfo/PlayerList/%d/PlayerTeam", i);
-						Pointer(path).Set(document, player->GetTeam().c_str());*/
-						sprintf_s(path, "/Paras/RoomInfo/PlayerList/%d/VehicleInfo/Id", i);
-						Pointer(path).Set(document, player->GetCurVehicle()->VehicleId.c_str());
-						sprintf_s(path, "/Paras/RoomInfo/PlayerList/%d/VehicleInfo/Name", i);
-						Pointer(path).Set(document, player->GetCurVehicle()->VehicleName.c_str());
-						sprintf_s(path, "/Paras/RoomInfo/PlayerList/%d/VehicleInfo/Type", i);
-						Pointer(path).Set(document, player->GetCurVehicle()->VehicleType.c_str());
-						sprintf_s(path, "/Paras/RoomInfo/PlayerList/%d/VehicleInfo/Attack", i);
-						Pointer(path).Set(document, player->GetCurVehicle()->Attack);
-						sprintf_s(path, "/Paras/RoomInfo/PlayerList/%d/VehicleInfo/Defend", i);
-						Pointer(path).Set(document, player->GetCurVehicle()->Defend);
-						sprintf_s(path, "/Paras/RoomInfo/PlayerList/%d/VehicleInfo/Motility", i);
-						Pointer(path).Set(document, player->GetCurVehicle()->Motility);
-						sprintf_s(path, "/Paras/RoomInfo/PlayerList/%d/VehicleInfo/MaxHealth", i);
-						Pointer(path).Set(document, player->GetCurVehicle()->MaxHealth);
-
-						i++;
-					}
-
 				}
 				else
 				{
