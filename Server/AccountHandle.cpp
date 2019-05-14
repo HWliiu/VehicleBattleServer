@@ -49,8 +49,8 @@ namespace GameServer
 							if (connSocket != player->ConnSocket)	//多设备登录
 							{
 								//下线并重新登录
-								//Logout();
-								PlayerManager::GetInstance()->RemovePlayer(id);
+								Logout(id, player, false);
+								//PlayerManager::GetInstance()->RemovePlayer(id);
 								closesocket(player->ConnSocket);	//只在这里以及客户端意外断线时服务器主动关闭套接字
 							}
 							else
@@ -211,36 +211,38 @@ namespace GameServer
 			HANDLE_CATCH(sendMessage);
 		}
 
-		void AccountHandle::Logout(string userId, PlayerModel* player)
+		void AccountHandle::Logout(string userId, PlayerModel* player, bool normalLogout)
 		{
 			CONSTRUCT_DOCUMENT(Common::LogoutResult.c_str());
 
 			auto sendMessage = player->SendMessageFn;
-			if (PlayerManager::GetInstance()->GetPlayer(userId) != nullptr)
+			if (normalLogout)
 			{
 				PlayerManager::GetInstance()->RemovePlayer(userId);
 				Pointer("/Paras/Result").Set(document, Common::SUCCEED.c_str());
 				Pointer("/Paras/Info").Set(document, "成功退出登录");
+				Pointer("/Paras/NormalLogout").Set(document, normalLogout);
 			}
 			else
 			{
-				//该用户已下线
-				Pointer("/Paras/Result").Set(document, Common::FAILURE.c_str());
-				Pointer("/Paras/Info").Set(document, "该用户已下线");
+				PlayerManager::GetInstance()->RemovePlayer(userId);
+				Pointer("/Paras/Result").Set(document, Common::SUCCEED.c_str());
+				Pointer("/Paras/Info").Set(document, "您的账号在其他设备登录");
+				Pointer("/Paras/NormalLogout").Set(document, normalLogout);
 			}
 			SERIALIZE_DOCUMENT;
-			player->SendMessageFn(output);
+			sendMessage(output);
 		}
 
 		void AccountHandle::ChangePassword(string userId, string oldPassword, string newPassword, PlayerModel* player)
 		{
 			CONSTRUCT_DOCUMENT(Common::ChangePasswordResult.c_str());
 
+			auto sendMessage = player->SendMessageFn;
 			try
 			{
 				auto session = DBUtil::GetInstance()->GetSession();
 				auto accountTable = session.getDefaultSchema().getTable("account");
-				auto sendMessage = player->SendMessageFn;
 
 				//验证密码
 				auto accountRowResult = accountTable.select("password").where("user_id=:userId").limit(1).bind("userId", userId).execute();
@@ -267,9 +269,9 @@ namespace GameServer
 					Pointer("/Paras/Info").Set(document, "原密码不正确");
 				}
 				SERIALIZE_DOCUMENT;
-				player->SendMessageFn(output);
+				sendMessage(output);
 			}
-			HANDLE_CATCH(player->SendMessageFn);
+			HANDLE_CATCH(sendMessage);
 		}
 		void AccountHandle::PurchaseVehicle(string userId, string vehicleId, PlayerModel* player)
 		{

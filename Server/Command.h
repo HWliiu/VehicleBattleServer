@@ -79,6 +79,26 @@ namespace GameServer
 		public:
 			virtual void Execute(Document document) override;
 		};
+		class ChangePrepareStateCommand :public ICommand
+		{
+		public:
+			virtual void Execute(Document document) override;
+		};
+		class KickPlayerCommand :public ICommand
+		{
+		public:
+			virtual void Execute(Document document) override;
+		};
+		class SendMessageCommand :public ICommand
+		{
+		public:
+			virtual void Execute(Document document) override;
+		};
+		class StartGameCommand :public ICommand
+		{
+		public:
+			virtual void Execute(Document document) override;
+		};
 	}
 }
 

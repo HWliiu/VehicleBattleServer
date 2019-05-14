@@ -11,9 +11,10 @@ namespace GameServer
 		{
 		public:
 			void ExitRoom(string userId, PlayerModel* player);
-			void KickPlayer(string userId, string roomId, string playerId, PlayerModel* player);
-			void SendMsg(string userId, string roomId, PlayerModel* player);
-			void StartGame(string userId, string roomId, PlayerModel* player);
+			void ChangePrepareState(string userId, bool prepareState, PlayerModel* player);
+			void KickPlayer(string userId, string playerId, PlayerModel* player);
+			void SendMsg(string userId, string message, PlayerModel* player);
+			void StartGame(string userId, PlayerModel* player);
 
 		};
 	}

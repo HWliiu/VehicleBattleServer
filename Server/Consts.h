@@ -41,7 +41,6 @@ namespace GameServer
 		const std::string JoinRoomResult = "JoinRoomResult";
 		const std::string RefreshRoomListResult = "RefreshRoomListResult";
 
-		const std::string NetPlayerJoinRoom = "NetPlayerJoinRoom";
 		const std::string ExitRoomResult = "ExitRoomResult";
 		const std::string ChangePrepareStateResult = "ChangePrepareStateResult";
 		const std::string StartGameResult = "StartGameResult";

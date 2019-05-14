@@ -120,6 +120,10 @@ namespace GameServer
 			_commandMap[Common::RequestJoinRoom] = new JoinRoomCommand();
 			_commandMap[Common::RequestSearchRoom] = new SearchRoomCommand();
 			_commandMap[Common::RequestExitRoom] = new ExitRoomCommand();
+			_commandMap[Common::RequestChangePrepareState] = new ChangePrepareStateCommand();
+			_commandMap[Common::RequestKickPlayer] = new KickPlayerCommand();
+			_commandMap[Common::RequestSendMessage] = new SendMessageCommand();
+			_commandMap[Common::RequestStartGame] = new StartGameCommand();
 		}
 	}
 }

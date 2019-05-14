@@ -115,7 +115,11 @@ namespace GameServer
 					if (room->AddPlayer(player))
 					{
 						Pointer("/Paras/Result").Set(document, Common::SUCCEED.c_str());
-						Pointer("/Paras/Info").Set(document, "加入成功");
+						char info[256];
+						sprintf_s(info, "%s 加入房间", player->GetName().c_str());
+						Pointer("/Paras/Info").Set(document, info);
+
+						Pointer("/Paras/JoinPlayerId").Set(document, player->GetUserId().c_str());
 
 						Pointer("/Paras/RoomInfo/RoomId").Set(document, room->RoomId.c_str());
 						Pointer("/Paras/RoomInfo/RoomName").Set(document, room->RoomName.c_str());
@@ -156,51 +160,35 @@ namespace GameServer
 
 							i++;
 						}
+						SERIALIZE_DOCUMENT;
+						player->SendMessageFn(output);
 						//通知其他玩家
-						NotifyOtherPlayersJoin(room, player);
+						//NotifyOtherPlayersJoin(room, player);
+						for (auto& roomPlayer : room->PlayerList)
+						{
+							if (player != roomPlayer)
+							{
+								roomPlayer->SendMessageFn(output);
+							}
+						}
 					}
 					else
 					{
 						Pointer("/Paras/Result").Set(document, Common::FAILURE.c_str());
 						Pointer("/Paras/Info").Set(document, "该房间人数已满");
+						SERIALIZE_DOCUMENT;
+						player->SendMessageFn(output);
 					}
 				}
 				else
 				{
 					Pointer("/Paras/Result").Set(document, Common::FAILURE.c_str());
 					Pointer("/Paras/Info").Set(document, "房间未找到");
-				}
-
-				SERIALIZE_DOCUMENT;
-				player->SendMessageFn(output);
-			}
-			HANDLE_CATCH(player->SendMessageFn);
-		}
-		void LobbyHandle::NotifyOtherPlayersJoin(RoomModel* room, PlayerModel* joinPlayer)
-		{
-			CONSTRUCT_DOCUMENT(Common::NetPlayerJoinRoom.c_str());
-
-			Pointer("/Paras/PlayerInfo/PlayerId").Set(document, joinPlayer->GetUserId().c_str());
-			Pointer("/Paras/PlayerInfo/PlayerName").Set(document, joinPlayer->GetName().c_str());
-			Pointer("/Paras/PlayerInfo/PlayerLevel").Set(document, joinPlayer->GetLevel().c_str());
-			Pointer("/Paras/PlayerInfo/PrepareState").Set(document, joinPlayer->GetPrepareState());
-			Pointer("/Paras/PlayerInfo/VehicleInfo/Id").Set(document, joinPlayer->GetCurVehicle()->VehicleId.c_str());
-			Pointer("/Paras/PlayerInfo/VehicleInfo/Name").Set(document, joinPlayer->GetCurVehicle()->VehicleName.c_str());
-			Pointer("/Paras/PlayerInfo/VehicleInfo/Type").Set(document, joinPlayer->GetCurVehicle()->VehicleType.c_str());
-			Pointer("/Paras/PlayerInfo/VehicleInfo/Attack").Set(document, joinPlayer->GetCurVehicle()->Attack);
-			Pointer("/Paras/PlayerInfo/VehicleInfo/Defend").Set(document, joinPlayer->GetCurVehicle()->Defend);
-			Pointer("/Paras/PlayerInfo/VehicleInfo/Motility").Set(document, joinPlayer->GetCurVehicle()->Motility);
-			Pointer("/Paras/PlayerInfo/VehicleInfo/MaxHealth").Set(document, joinPlayer->GetCurVehicle()->MaxHealth);
-
-			SERIALIZE_DOCUMENT;
-
-			for (auto& player : room->PlayerList)
-			{
-				if (joinPlayer != player)
-				{
+					SERIALIZE_DOCUMENT;
 					player->SendMessageFn(output);
 				}
 			}
+			HANDLE_CATCH(player->SendMessageFn);
 		}
 
 		void LobbyHandle::SearchRoom(string userId, string roomId, PlayerModel* player)

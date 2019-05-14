@@ -123,5 +123,39 @@ namespace GameServer
 			auto pRoomHandle = HandleManager::GetInstance()->GetRoomHandle();
 			pRoomHandle->ExitRoom(userId, player);
 		}
-	}
+		void ChangePrepareStateCommand::Execute(Document document)
+		{
+			VERIFY_ACCOUNT;
+
+			auto prepareState = Pointer("/Paras/PrepareState").Get(document)->GetBool();
+
+			auto pRoomHandle = HandleManager::GetInstance()->GetRoomHandle();
+			pRoomHandle->ChangePrepareState(userId, prepareState, player);
+		}
+		void KickPlayerCommand::Execute(Document document)
+		{
+			VERIFY_ACCOUNT;
+
+			auto playerId = Pointer("/Paras/PlayerId").Get(document)->GetString();
+
+			auto pRoomHandle = HandleManager::GetInstance()->GetRoomHandle();
+			pRoomHandle->KickPlayer(userId, playerId, player);
+		}
+		void SendMessageCommand::Execute(Document document)
+		{
+			VERIFY_ACCOUNT;
+
+			auto message = Pointer("/Paras/Message").Get(document)->GetString();
+
+			auto pRoomHandle = HandleManager::GetInstance()->GetRoomHandle();
+			pRoomHandle->SendMsg(userId, message, player);
+		}
+		void StartGameCommand::Execute(Document document)
+		{
+			VERIFY_ACCOUNT;
+
+			auto pRoomHandle = HandleManager::GetInstance()->GetRoomHandle();
+			pRoomHandle->StartGame(userId, player);
+		}
+}
 }
