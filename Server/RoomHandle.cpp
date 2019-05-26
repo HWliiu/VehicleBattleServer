@@ -111,7 +111,7 @@ namespace GameServer
 			}
 			HANDLE_CATCH(if (player->SendMessageFn != nullptr) player->SendMessageFn);
 		}
-		void RoomHandle::ChangePrepareState(string userId, bool prepareState, PlayerModel * player)
+		void RoomHandle::ChangePrepareState(string userId, bool prepareState, PlayerModel* player)
 		{
 			CONSTRUCT_DOCUMENT(Common::ChangePrepareStateResult.c_str());
 
@@ -137,7 +137,7 @@ namespace GameServer
 			}
 			HANDLE_CATCH(player->SendMessageFn);
 		}
-		void RoomHandle::KickPlayer(string userId, string playerId, PlayerModel * player)
+		void RoomHandle::KickPlayer(string userId, string playerId, PlayerModel* player)
 		{
 			CONSTRUCT_DOCUMENT(Common::KickPlayerResult.c_str());
 
@@ -207,7 +207,7 @@ namespace GameServer
 			}
 			HANDLE_CATCH(player->SendMessageFn);
 		}
-		void RoomHandle::SendMsg(string userId, string message, PlayerModel * player)
+		void RoomHandle::SendMsg(string userId, string message, PlayerModel* player)
 		{
 			CONSTRUCT_DOCUMENT(Common::SendMessageResult.c_str());
 
@@ -229,7 +229,7 @@ namespace GameServer
 			}
 			HANDLE_CATCH(player->SendMessageFn);
 		}
-		void RoomHandle::StartGame(string userId, PlayerModel * player)
+		void RoomHandle::StartGame(string userId, PlayerModel* player)
 		{
 			CONSTRUCT_DOCUMENT(Common::StartGameResult.c_str());
 
@@ -248,7 +248,7 @@ namespace GameServer
 					return;
 				}
 
-				if (room->GetPlayerNum() < 2)
+				if (room->GetPlayerNum() < 1)
 				{
 					Pointer("/Paras/Result").Set(document, Common::FAILURE.c_str());
 					Pointer("/Paras/Info").Set(document, "房间玩家人数低于2人 无法开始游戏");
@@ -271,6 +271,17 @@ namespace GameServer
 
 				Pointer("/Paras/Result").Set(document, Common::SUCCEED.c_str());
 				Pointer("/Paras/Info").Set(document, "开始游戏");
+
+				char path[256];
+				int i = 0;
+				for (auto& player : room->PlayerList)
+				{
+					sprintf_s(path, "/Paras/PlayerOrder/%d", i);
+					Pointer(path).Set(document, player->GetUserId().c_str());
+
+					i++;
+				}
+
 				room->IsGaming = true;
 				SERIALIZE_DOCUMENT;
 				for (auto& roomPlayer : room->PlayerList)

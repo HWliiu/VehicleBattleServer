@@ -15,8 +15,6 @@ namespace GameServer
 			void RefreshRoomList(string userId, PlayerModel* player);
 			void JoinRoom(string userId, string roomId, PlayerModel* player);
 			void SearchRoom(string userId, string roomId, PlayerModel* player);
-		private:
-			void NotifyOtherPlayersJoin(RoomModel* room, PlayerModel* joinPlayer);
 		};
 	}
 }

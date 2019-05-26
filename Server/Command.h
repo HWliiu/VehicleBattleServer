@@ -99,6 +99,21 @@ namespace GameServer
 		public:
 			virtual void Execute(Document document) override;
 		};
+		class UpLoadTransformStateCommand :public ICommand
+		{
+		public:
+			virtual void Execute(Document document) override;
+		};
+		class UpLoadFireStateCommand :public ICommand
+		{
+		public:
+			virtual void Execute(Document document) override;
+		};
+		class UpLoadHealthStateCommand :public ICommand
+		{
+		public:
+			virtual void Execute(Document document) override;
+		};
 	}
 }
 

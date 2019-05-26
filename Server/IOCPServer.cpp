@@ -4,7 +4,7 @@
 #include "SmallTools.h"
 
 #pragma comment(lib,"ws2_32.lib")
-#define OUTPUTMESSAGE
+//#define OUTPUTMESSAGE
 
 namespace GameServer
 {

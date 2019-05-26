@@ -157,5 +157,21 @@ namespace GameServer
 			auto pRoomHandle = HandleManager::GetInstance()->GetRoomHandle();
 			pRoomHandle->StartGame(userId, player);
 		}
-}
+
+		void UpLoadTransformStateCommand::Execute(Document document)
+		{
+			VERIFY_ACCOUNT;
+
+			if (!Pointer("/Paras/Token").Erase(document)) return;
+
+			auto pBattleHandle = HandleManager::GetInstance()->GetBattleHandle();
+			pBattleHandle->UpdateTransformState(userId, std::move(document), player);
+		}
+		void UpLoadFireStateCommand::Execute(Document document)
+		{
+		}
+		void UpLoadHealthStateCommand::Execute(Document document)
+		{
+		}
+	}
 }

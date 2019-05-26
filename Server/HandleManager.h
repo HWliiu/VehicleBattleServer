@@ -5,6 +5,7 @@
 #include "LobbyHandle.h"
 #include "RoomHandle.h"
 #include "Singleton.h"
+#include "BattleHandle.h"
 
 namespace GameServer
 {
@@ -19,11 +20,13 @@ namespace GameServer
 			inline StoreHandle* GetStoreHandle() { return &_storeHandle; }
 			inline LobbyHandle* GetLobbyHandle() { return &_lobbyHandle; }
 			inline RoomHandle* GetRoomHandle() { return &_roomHandle; }
+			inline BattleHandle* GetBattleHandle() { return &_battleHandle; }
 		private:
 			AccountHandle _accountHandle;
 			StoreHandle _storeHandle;
 			LobbyHandle _lobbyHandle;
 			RoomHandle _roomHandle;
+			BattleHandle _battleHandle;
 
 			HandleManager()
 			{

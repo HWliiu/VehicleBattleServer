@@ -25,6 +25,10 @@ namespace GameServer
 		const std::string RequestKickPlayer = "RequestKickPlayer";
 		const std::string RequestSendMessage = "RequestSendMessage";
 
+		const std::string UpLoadTransformState = "UpLoadTransformState";
+		const std::string UpLoadFireState = "UpLoadFireState";
+		const std::string UpLoadHealthState = "UpLoadHealthState";
+
 
 		//Result
 		const std::string LoginResult = "LoginResult";
@@ -47,6 +51,9 @@ namespace GameServer
 		const std::string KickPlayerResult = "KickPlayerResult";
 		const std::string SendMessageResult = "SendMessageResult";
 
+		const std::string UpdateTransformState = "UpdateTransformState";
+		const std::string UpdateFireState = "UpdateFireState";
+		const std::string UpdateHealthState = "UpdateHealthState";
 
 		const std::string SUCCEED = "succeed";
 		const std::string FAILURE = "failure";

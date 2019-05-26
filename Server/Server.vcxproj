@@ -151,6 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BattleHandle.h" />
     <ClInclude Include="Command.h" />
     <ClInclude Include="Consts.h" />
     <ClInclude Include="CommandDispatcher.h" />
@@ -172,6 +173,7 @@
     <ClInclude Include="VehicleModel.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BattleHandle.cpp" />
     <ClCompile Include="Command.cpp" />
     <ClCompile Include="CommandDispatcher.cpp" />
     <ClCompile Include="IOCPServer.cpp" />

@@ -5,7 +5,7 @@
 #include "PlayerManager.h"
 #include "Consts.h"
 
-#define OUTPUTMESSAGE
+//#define OUTPUTMESSAGE
 
 namespace GameServer
 {
@@ -124,6 +124,9 @@ namespace GameServer
 			_commandMap[Common::RequestKickPlayer] = new KickPlayerCommand();
 			_commandMap[Common::RequestSendMessage] = new SendMessageCommand();
 			_commandMap[Common::RequestStartGame] = new StartGameCommand();
+			_commandMap[Common::UpLoadTransformState] = new UpLoadTransformStateCommand();
+			_commandMap[Common::UpLoadFireState] = new UpLoadFireStateCommand();
+			_commandMap[Common::UpLoadHealthState] = new UpLoadHealthStateCommand();
 		}
 	}
 }
