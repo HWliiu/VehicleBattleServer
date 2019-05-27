@@ -54,6 +54,7 @@ namespace GameServer
 		const std::string UpdateTransformState = "UpdateTransformState";
 		const std::string UpdateFireState = "UpdateFireState";
 		const std::string UpdateHealthState = "UpdateHealthState";
+		const std::string EndGame = "EndGame";
 
 		const std::string SUCCEED = "succeed";
 		const std::string FAILURE = "failure";

@@ -169,6 +169,12 @@ namespace GameServer
 		}
 		void UpLoadFireStateCommand::Execute(Document document)
 		{
+			VERIFY_ACCOUNT;
+
+			if (!Pointer("/Paras/Token").Erase(document)) return;
+
+			auto pBattleHandle = HandleManager::GetInstance()->GetBattleHandle();
+			pBattleHandle->UpdateFireState(userId, std::move(document), player);
 		}
 		void UpLoadHealthStateCommand::Execute(Document document)
 		{

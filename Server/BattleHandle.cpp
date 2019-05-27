@@ -37,5 +37,31 @@ namespace GameServer
 				return;
 			}
 		}
+		void BattleHandle::UpdateFireState(string userId, Document document, PlayerModel* player)
+		{
+			Pointer("/Command").Set(document, Common::UpdateFireState.c_str());
+			try
+			{
+				auto roomId = player->GetCurRoomId();
+				auto roomManager = RoomManager::GetInstance();
+				auto room = roomManager->GetRoom(roomId);
+
+				if (room != nullptr)
+				{
+					SERIALIZE_DOCUMENT;
+					for (auto& roomPlayer : room->PlayerList)
+					{
+						if (roomPlayer != player)
+						{
+							roomPlayer->SendMessageFn(output);
+						}
+					}
+				}
+			}
+			catch (const std::exception&)
+			{
+				return;
+			}
+		}
 	}
 }
