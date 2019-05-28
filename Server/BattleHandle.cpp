@@ -5,13 +5,14 @@
 #include "include/rapidjson/writer.h"
 #include "Consts.h"
 #include "RoomManager.h"
+#include "DbUtil.h"
 
 
 namespace GameServer
 {
 	namespace Handle
 	{
-		void BattleHandle::UpdateTransformState(string userId, Document document, PlayerModel* player)
+		void BattleHandle::UpdateTransformState(std::string userId, Document document, PlayerModel* player)
 		{
 			Pointer("/Command").Set(document, Common::UpdateTransformState.c_str());
 			try
@@ -37,7 +38,7 @@ namespace GameServer
 				return;
 			}
 		}
-		void BattleHandle::UpdateFireState(string userId, Document document, PlayerModel* player)
+		void BattleHandle::UpdateFireState(std::string userId, Document document, PlayerModel* player)
 		{
 			Pointer("/Command").Set(document, Common::UpdateFireState.c_str());
 			try
@@ -63,7 +64,7 @@ namespace GameServer
 				return;
 			}
 		}
-		void BattleHandle::UpdateHealthState(string userId, int health, PlayerModel* player)
+		void BattleHandle::UpdateHealthState(std::string userId, int health, PlayerModel* player)
 		{
 			CONSTRUCT_DOCUMENT(Common::UpdateHealthState.c_str());
 
@@ -90,10 +91,45 @@ namespace GameServer
 				if (player->GetHealth() < 0)
 				{
 					room->RemovePlayer(player);
+					EndGame(room->GetPlayerNum() + 1, player);
+				}
+				if (room->GetPlayerNum() <= 1)
+				{
+					EndGame(1, room->PlayerList.front());
+					RoomManager::GetInstance()->RemoveRoom(roomId);
 				}
 			}
 			catch (...)
 			{
+			}
+		}
+		void BattleHandle::EndGame(int rank, PlayerModel* player)
+		{
+			CONSTRUCT_DOCUMENT(Common::EndGame.c_str());
+			try
+			{
+				auto session = DBUtil::GetInstance()->GetSession();
+				auto accountTable = session.getDefaultSchema().getTable("account");
+
+				auto userExperience = (int)accountTable.select("experience").where("user_id=:userId").limit(1).bind("userId", player->GetUserId().c_str()).execute().fetchOne().get(0);
+				auto userMoney = (int)accountTable.select("money").where("user_id=:userId").limit(1).bind("userId", player->GetUserId().c_str()).execute().fetchOne().get(0);
+
+				auto experence = 8000 / rank;
+				auto money = 8000 / rank;
+
+				accountTable.update().set("money", userMoney + money).set("experience", userExperience + userMoney).where("user_id=:userId").limit(1).bind("userId", player->GetUserId().c_str()).execute();
+
+				Pointer("/Paras/Rank").Set(document, rank);
+				Pointer("/Paras/Experence").Set(document, experence);
+				Pointer("/Paras/Money").Set(document, money);
+				Pointer("/Paras/TotalExperence").Set(document, userExperience + userMoney);
+				Pointer("/Paras/TotalMoney").Set(document, userMoney + money);
+				SERIALIZE_DOCUMENT;
+				player->SendMessageFn(output);
+			}
+			catch (const std::exception& e)
+			{
+				printf("%s\n", e.what());
 			}
 		}
 	}
