@@ -178,6 +178,12 @@ namespace GameServer
 		}
 		void UpLoadHealthStateCommand::Execute(Document document)
 		{
+			VERIFY_ACCOUNT;
+
+			auto health = Pointer("/Paras/Health").Get(document)->GetInt();
+
+			auto pBattleHandle = HandleManager::GetInstance()->GetBattleHandle();
+			pBattleHandle->UpdateHealthState(userId, health, player);
 		}
 	}
 }

@@ -63,5 +63,38 @@ namespace GameServer
 				return;
 			}
 		}
+		void BattleHandle::UpdateHealthState(string userId, int health, PlayerModel* player)
+		{
+			CONSTRUCT_DOCUMENT(Common::UpdateHealthState.c_str());
+
+			try
+			{
+				auto roomId = player->GetCurRoomId();
+				auto roomManager = RoomManager::GetInstance();
+				auto room = roomManager->GetRoom(roomId);
+
+				player->SetHealth(health);
+
+				Pointer("/Paras/PlayerId").Set(document, player->GetUserId().c_str());
+				Pointer("/Paras/Health").Set(document, player->GetHealth());
+
+				SERIALIZE_DOCUMENT;
+				for (auto& roomPlayer : room->PlayerList)
+				{
+					if (roomPlayer->GetUserId() != player->GetUserId())
+					{
+						roomPlayer->SendMessageFn(output);
+					}
+				}
+
+				if (player->GetHealth() < 0)
+				{
+					room->RemovePlayer(player);
+				}
+			}
+			catch (...)
+			{
+			}
+		}
 	}
 }

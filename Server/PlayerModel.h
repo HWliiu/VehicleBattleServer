@@ -49,7 +49,7 @@ namespace GameServer
 			inline bool GetPrepareState() { return _prepareState; }
 			inline int GetHealth() { return _health; }
 
-			inline void TakeDamage(int value)
+			/*inline void TakeDamage(int value)
 			{
 				if (_health - value < 0)
 				{
@@ -71,8 +71,11 @@ namespace GameServer
 				{
 					_health = _health + value;
 				}
+			}*/
+			inline void SetHealth(int health)
+			{
+				_health = health;
 			}
-
 
 			inline void SetCurRoomId(std::string roomId) { _curRoomID = roomId; }
 			//inline void SetTeam(std::string team) { _team = team; }
